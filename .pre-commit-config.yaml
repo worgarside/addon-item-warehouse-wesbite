@@ -1,5 +1,16 @@
 ---
 repos:
+  - repo: https://github.com/python-poetry/poetry
+    rev: 1.5.1
+    hooks:
+      - id: poetry-check
+      - id: poetry-export
+        args:
+          - -f
+          - requirements.txt
+          - -o
+          - item_warehouse/src/requirements.txt
+
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.9.0
     hooks:
@@ -8,7 +19,7 @@ repos:
           - --py311-plus
 
   - repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 23.7.0
     hooks:
       - id: black
         language_version: python3.11
@@ -38,7 +49,6 @@ repos:
           - --autofix
           - --indent
           - '2'
-      - id: requirements-txt-fixer
       - id: trailing-whitespace
 
   - repo: https://github.com/pycqa/isort
@@ -46,9 +56,6 @@ repos:
     hooks:
       - id: isort
         name: isort (python)
-        args:
-          - -a
-          - from __future__ import annotations
 
   - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
     rev: 0.2.3
@@ -87,6 +94,14 @@ repos:
         args:
           - --strict
           - --show-error-codes
+        additional_dependencies:
+          - fastapi
+          - pydantic
+          - sqlalchemy
+          - sqlalchemy-stubs
+          - uvicorn
+          - wg-utilities
+          - bidict
 
   - repo: local
     hooks:
@@ -122,6 +137,6 @@ repos:
           - '*.svg,*.json'
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.0.277
+    rev: v0.0.278
     hooks:
       - id: ruff
