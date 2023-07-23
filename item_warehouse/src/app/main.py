@@ -160,7 +160,12 @@ def response_validation_error_handler(
 # Warehouse Endpoints
 
 
-@app.post("/v1/warehouses", response_model=Warehouse, tags=[ApiTag.WAREHOUSE])
+@app.post(
+    "/v1/warehouses",
+    response_model=Warehouse,
+    tags=[ApiTag.WAREHOUSE],
+    response_model_exclude_unset=True,
+)
 def create_warehouse(
     warehouse: WarehouseCreate, db: Session = Depends(get_db)  # noqa: B008
 ) -> WarehouseModel:
@@ -191,7 +196,10 @@ def delete_warehouse(
 
 
 @app.get(
-    "/v1/warehouses/{warehouse_name}", response_model=Warehouse, tags=[ApiTag.WAREHOUSE]
+    "/v1/warehouses/{warehouse_name}",
+    response_model=Warehouse,
+    tags=[ApiTag.WAREHOUSE],
+    response_model_exclude_unset=True,
 )
 def get_warehouse(
     warehouse_name: str, db: Session = Depends(get_db)  # noqa: B008
@@ -201,7 +209,12 @@ def get_warehouse(
     return crud.get_warehouse(db, warehouse_name)
 
 
-@app.get("/v1/warehouses", response_model=list[Warehouse], tags=[ApiTag.WAREHOUSE])
+@app.get(
+    "/v1/warehouses",
+    response_model=list[Warehouse],
+    tags=[ApiTag.WAREHOUSE],
+    response_model_exclude_unset=True,
+)
 def get_warehouses(
     offset: int = 0, limit: int = 100, db: Session = Depends(get_db)  # noqa: B008
 ) -> list[WarehouseModel]:
@@ -227,6 +240,7 @@ def update_warehouse(
     "/v1/items/{item_name}/schema/",
     response_model=ItemSchema,
     tags=[ApiTag.ITEM_SCHEMA],
+    response_model_exclude_unset=True,
 )
 def get_item_schema(
     item_name: str, db: Session = Depends(get_db)  # noqa: B008
@@ -239,6 +253,7 @@ def get_item_schema(
     "/v1/items/schemas",
     response_model=dict[SqlStr, ItemSchema],
     tags=[ApiTag.ITEM_SCHEMA],
+    response_model_exclude_unset=True,
 )
 def get_item_schemas(
     db: Session = Depends(get_db),  # noqa: B008
@@ -272,12 +287,16 @@ def create_item(
             ]
         ),
     ],
+    request: Request,
     db: Session = Depends(get_db),  # noqa: B008
 ) -> ItemResponse:
     """Create an item."""
 
     LOGGER.info("POST\t/v1/warehouses/%s/items", warehouse_name)
     LOGGER.debug(dumps(item))
+
+    if client := request.client:
+        item.update({"_request.client.host": client.host})
 
     res = crud.create_item(db, warehouse_name, item)
 
