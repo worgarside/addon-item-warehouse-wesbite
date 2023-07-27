@@ -1,22 +1,26 @@
 """SQLAlchemy models for item_warehouse."""
 
-from datetime import datetime
+from datetime import date, datetime
 from json import dumps
 from logging import getLogger
-from typing import ClassVar, cast
+from typing import Any, ClassVar
 
 from database import Base
-from exceptions import DuplicateFieldError, WarehouseNotFoundError
+from exceptions import DuplicateFieldError, InvalidFieldsError, WarehouseNotFoundError
 from pydantic import Field, create_model
 from schemas import (
     DefaultFunctionType,
+    GeneralItemModelType,
     ItemAttributeType,
     ItemBase,
     ItemFieldDefinition,
     ItemUpdateBase,
+    PythonType,
+    QueryParamType,
 )
 from sqlalchemy import JSON, Column, DateTime, Integer, String
 from sqlalchemy.exc import OperationalError
+from sqlalchemy.inspection import inspect
 from sqlalchemy.orm.attributes import InstrumentedAttribute
 from sqlalchemy.orm.decl_api import DeclarativeMeta
 from wg_utilities.loggers import add_stream_handler
@@ -63,6 +67,18 @@ class Warehouse(Base):  # type: ignore[misc]
 
         return cls._ITEM_MODELS.get(warehouse_name)
 
+    def search_params_are_pks(self, search_params: dict[str, Any]) -> bool:
+        """Check if the given search params are the primary key for this warehouse.
+
+        Args:
+            search_params (GeneralItemModelType): The search params to check.
+
+        Returns:
+            bool: True if the search params are the primary key for this warehouse,
+                False otherwise.
+        """
+        return sorted(self.pk_name) == sorted(search_params.keys())
+
     def drop(self, *, no_exist_ok: bool = False) -> None:
         """Drop the physical table for storing items in."""
 
@@ -93,6 +109,33 @@ class Warehouse(Base):  # type: ignore[misc]
 
         self.item_model.__table__.create(bind=self.ENGINE)
 
+    def parse_pk_dict(
+        self, pk_dict: GeneralItemModelType | QueryParamType
+    ) -> tuple[PythonType, ...]:
+        """Parse a PK dict into a tuple of SQLAlchemy PK objects for comparison.
+
+        Args:
+            pk_dict (dict[str, str]): The primary key dict to parse.
+
+        Returns:
+            tuple[PythonType, ...]: The parsed primary key objects.
+        """
+
+        if not self.search_params_are_pks(pk_dict):
+            raise InvalidFieldsError(
+                sorted(pk_dict.keys()),
+            )
+
+        item_pk = []
+
+        for pk in self.pk:
+            if pk.type.python_type in (date, datetime):
+                item_pk.append(pk.type.python_type.fromisoformat(pk_dict[pk.name]))
+            else:
+                item_pk.append(pk.type.python_type(pk_dict[pk.name]))
+
+        return tuple(item_pk)
+
     @property
     def item_model(self) -> DeclarativeMeta:
         """Get the SQLAlchemy model for this warehouse's items."""
@@ -100,14 +143,9 @@ class Warehouse(Base):  # type: ignore[misc]
         if self.name not in self._ITEM_MODELS:
             LOGGER.info("Creating SQLAlchemy model for warehouse %r", self.name)
 
-            model_fields: dict[str, Column[ItemAttributeType] | str] = {
-                "created_at": Column(
-                    name="created_at",
-                    type_=DateTime,  # type: ignore[arg-type]
-                    nullable=False,
-                    default=datetime.utcnow,
-                ),
-            }
+            model_fields: dict[str, Column[ItemAttributeType] | str] = {}
+
+            user_defined_pk = False
 
             _field_def: ItemFieldDefinition[ItemAttributeType]
             for field_name, _field_def in self.item_schema.items():
@@ -123,26 +161,20 @@ class Warehouse(Base):  # type: ignore[misc]
                 )
 
                 if field_definition.primary_key:
-                    if "primary_key_field" in model_fields:
-                        raise ValueError(  # noqa: TRY003
-                            f"Multiple primary keys defined for warehouse {self.name}"
-                        )
-
+                    user_defined_pk = True
                     LOGGER.info(
                         "User-defined primary key %r found in warehouse %r",
                         field_name,
                         self.name,
                     )
-                    model_fields["primary_key_field"] = field_name
 
-            if "primary_key_field" not in model_fields:
+            if not user_defined_pk:
                 model_fields["id"] = Column(
                     "id",
                     Integer,  # type: ignore[arg-type]
                     primary_key=True,
                     index=True,
                 )
-                model_fields["primary_key_field"] = "id"
 
             model_fields["__tablename__"] = self.name
 
@@ -179,7 +211,9 @@ class Warehouse(Base):  # type: ignore[misc]
             pydantic_schema = {}
 
             for field_name, field_definition in item_schema_parsed.items():
-                field_kwargs: dict[str, object | DefaultFunctionType[object]] = {}
+                field_kwargs: dict[
+                    str, PythonType | DefaultFunctionType[PythonType]
+                ] = {}
 
                 if callable(field_definition.default):
                     field_kwargs["default_factory"] = field_definition.default
@@ -213,13 +247,16 @@ class Warehouse(Base):  # type: ignore[misc]
         return self._ITEM_SCHEMAS[self.name]
 
     @property
-    def pk(self) -> InstrumentedAttribute:
-        """Get primary key field for this warehouse."""
+    def pk(self) -> tuple[InstrumentedAttribute, ...]:
+        """Get primary key field(s) for this warehouse."""
 
-        return cast(InstrumentedAttribute, getattr(self.item_model, self.pk_name))
+        return tuple(
+            getattr(self.item_model, pk.name)
+            for pk in inspect(self.item_model).primary_key
+        )
 
     @property
-    def pk_name(self) -> str:
-        """Get the name of the primary key field for this warehouse."""
+    def pk_name(self) -> tuple[str, ...]:
+        """Get the name of the primary key field(s) for this warehouse."""
 
-        return cast(str, self.item_model.primary_key_field)
+        return tuple(pk.name for pk in inspect(self.item_model).primary_key)
