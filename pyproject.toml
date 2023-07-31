@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "addon-item-warehouse"
-version = "0.1.2"
+version = "1.0.0"
 description = "Home Assistant add-on for interacting with items in a database via an API"
 authors = ["Will Garside <worgarside@gmail.com>"]
 license = "MIT"
@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 fastapi = "^0.100.0"
-sqlalchemy = "^2.0.18"
+sqlalchemy = "^2.0.19"
 python-dotenv = "^1.0.0"
 pymysql = "^1.1.0"
 wg-utilities = "^3.7.0"
@@ -114,3 +114,6 @@ ignore = [
 
 [tool.ruff.pydocstyle]
 convention = "google"
+
+[tool.ruff.pylint]
+max-args=6

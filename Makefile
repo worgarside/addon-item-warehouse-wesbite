@@ -9,7 +9,6 @@ pynguin-%:
 		--assertion_generation SIMPLE \
 		--algorithm MOSA
 
-
 api:
 	clear
 	cd item_warehouse/src/app/ && \
@@ -23,7 +22,6 @@ api-clean:
 docker:
 	cd item_warehouse && \
 	docker-compose --verbose up --build
-
 
 # VSCode Shortcuts #
 

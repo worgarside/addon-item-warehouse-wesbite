@@ -24,10 +24,11 @@ import crud
 from _dependencies import get_db
 from database import SQLALCHEMY_DATABASE_URL, Base, SessionLocal
 from exceptions import ItemSchemaExistsError, WarehouseExistsError
-from fastapi import Body, Depends, FastAPI, HTTPException, Request, status
+from fastapi import Body, Depends, FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError, ResponseValidationError
-from fastapi.params import Query
+from fastapi.params import Path, Query
 from fastapi.responses import JSONResponse
+from models import Page
 from models import Warehouse as WarehouseModel
 from pydantic import ValidationError
 from schemas import (
@@ -38,7 +39,7 @@ from schemas import (
     Warehouse,
     WarehouseCreate,
 )
-from sqlalchemy.exc import OperationalError
+from sqlalchemy.exc import OperationalError, SQLAlchemyError
 from sqlalchemy.orm import Session
 from wg_utilities.loggers import add_stream_handler
 
@@ -53,6 +54,20 @@ except OperationalError:
     raise
 
 
+class ApiTag(StrEnum):
+    """API tags."""
+
+    ITEM = auto()
+    ITEM_SCHEMA = auto()
+    PAGINATED = auto()
+    WAREHOUSE = auto()
+
+
+SqlStrPath = Annotated[
+    str, Path(pattern=r"^[a-zA-Z0-9_]+$", min_length=1, max_length=64)
+]
+
+
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     """Populate the item model/schema lookups before the application lifecycle starts."""
@@ -63,7 +78,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         for warehouse in crud.get_warehouses(
             db,
             allow_no_warehouse_table=True,
-        ):
+        ).items:
             # Just accessing the item_model property will create the SQLAlchemy model.
             __ = warehouse.item_model
             ___ = warehouse.item_schema_class
@@ -94,37 +109,12 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(lifespan=lifespan)
 
 
-class ApiTag(StrEnum):
-    """API tags."""
-
-    ITEM = auto()
-    ITEM_SCHEMA = auto()
-    WAREHOUSE = auto()
-
-
-@app.exception_handler(ValidationError)
-def validation_error_handler(_: Request, exc: ValidationError) -> JSONResponse:
-    """Handle Pydantic validation errors."""
-    LOGGER.debug("400 Bad Request")
-    return JSONResponse(
-        status_code=status.HTTP_400_BAD_REQUEST,
-        content=[
-            {
-                "msg": err.get("msg"),
-                "loc": err.get("loc"),
-                "type": err.get("type"),
-            }
-            for err in exc.errors()
-        ],
-    )
-
-
 @app.exception_handler(RequestValidationError)
 def request_validation_error_handler(
     _: Request, exc: RequestValidationError
 ) -> JSONResponse:
     """Handle FastAPI request validation errors."""
-    LOGGER.debug("400 Bad Request")
+    LOGGER.debug("400 Bad Request: %r", exc)
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
         content=[
@@ -143,9 +133,36 @@ def response_validation_error_handler(
     _: Request, exc: ResponseValidationError
 ) -> JSONResponse:
     """Handle FastAPI response validation errors."""
-    LOGGER.debug("500 Internal Server Error")
+    LOGGER.debug("500 Internal Server Error: %r", exc)
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content=[
+            {
+                "msg": err.get("msg"),
+                "loc": err.get("loc"),
+                "type": err.get("type"),
+            }
+            for err in exc.errors()
+        ],
+    )
+
+
+@app.exception_handler(SQLAlchemyError)
+def sqlalchemy_error_handler(_: Request, exc: SQLAlchemyError) -> JSONResponse:
+    """Handle SQLAlchemy errors."""
+    LOGGER.debug("500 Internal Server Error: %r", exc)
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={"detail": str(exc)},
+    )
+
+
+@app.exception_handler(ValidationError)
+def validation_error_handler(_: Request, exc: ValidationError) -> JSONResponse:
+    """Handle Pydantic validation errors."""
+    LOGGER.debug("400 Bad Request: %r", exc)
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
         content=[
             {
                 "msg": err.get("msg"),
@@ -160,7 +177,12 @@ def response_validation_error_handler(
 # Warehouse Endpoints
 
 
-@app.post("/v1/warehouses", response_model=Warehouse, tags=[ApiTag.WAREHOUSE])
+@app.post(
+    "/v1/warehouses",
+    response_model=Warehouse,
+    tags=[ApiTag.WAREHOUSE],
+    response_model_exclude_unset=True,
+)
 def create_warehouse(
     warehouse: WarehouseCreate, db: Session = Depends(get_db)  # noqa: B008
 ) -> WarehouseModel:
@@ -184,27 +206,37 @@ def create_warehouse(
     tags=[ApiTag.WAREHOUSE],
 )
 def delete_warehouse(
-    warehouse_name: str, db: Session = Depends(get_db)  # noqa: B008
+    warehouse_name: SqlStrPath, db: Session = Depends(get_db)  # noqa: B008
 ) -> None:
     """Delete a warehouse."""
     crud.delete_warehouse(db, warehouse_name)
 
 
 @app.get(
-    "/v1/warehouses/{warehouse_name}", response_model=Warehouse, tags=[ApiTag.WAREHOUSE]
+    "/v1/warehouses/{warehouse_name}",
+    response_model=Warehouse,
+    tags=[ApiTag.WAREHOUSE],
+    response_model_exclude_unset=True,
 )
 def get_warehouse(
-    warehouse_name: str, db: Session = Depends(get_db)  # noqa: B008
+    warehouse_name: SqlStrPath, db: Session = Depends(get_db)  # noqa: B008
 ) -> WarehouseModel:
     """Get a warehouse."""
 
     return crud.get_warehouse(db, warehouse_name)
 
 
-@app.get("/v1/warehouses", response_model=list[Warehouse], tags=[ApiTag.WAREHOUSE])
+@app.get(
+    "/v1/warehouses",
+    response_model=Page[Warehouse],
+    tags=[ApiTag.PAGINATED, ApiTag.WAREHOUSE],
+    response_model_exclude_unset=True,
+)
 def get_warehouses(
-    offset: int = 0, limit: int = 100, db: Session = Depends(get_db)  # noqa: B008
-) -> list[WarehouseModel]:
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(gt=0, le=100)] = 100,
+    db: Session = Depends(get_db),  # noqa: B008
+) -> Page[WarehouseModel]:
     """List warehouses."""
 
     return crud.get_warehouses(db, offset=offset, limit=limit)
@@ -212,10 +244,10 @@ def get_warehouses(
 
 @app.put("/v1/warehouses/{warehouse_name}", tags=[ApiTag.WAREHOUSE])
 def update_warehouse(
-    warehouse_name: str,
+    warehouse_name: SqlStrPath,
     warehouse: WarehouseCreate,
     db: Session = Depends(get_db),  # noqa: B008
-) -> dict[str, str]:
+) -> Any:
     """Update a warehouse in a warehouse."""
     return crud.update_warehouse(db, warehouse_name, warehouse)
 
@@ -227,9 +259,10 @@ def update_warehouse(
     "/v1/items/{item_name}/schema/",
     response_model=ItemSchema,
     tags=[ApiTag.ITEM_SCHEMA],
+    response_model_exclude_unset=True,
 )
 def get_item_schema(
-    item_name: str, db: Session = Depends(get_db)  # noqa: B008
+    item_name: SqlStrPath, db: Session = Depends(get_db)  # noqa: B008
 ) -> ItemSchema:
     """Get an item's schema."""
     return crud.get_item_schema(db, item_name)
@@ -239,6 +272,7 @@ def get_item_schema(
     "/v1/items/schemas",
     response_model=dict[SqlStr, ItemSchema],
     tags=[ApiTag.ITEM_SCHEMA],
+    response_model_exclude_unset=True,
 )
 def get_item_schemas(
     db: Session = Depends(get_db),  # noqa: B008
@@ -256,9 +290,9 @@ def get_item_schemas(
     tags=[ApiTag.ITEM],
 )
 def create_item(
-    warehouse_name: str,
+    warehouse_name: SqlStrPath,
     item: Annotated[
-        dict[str, object],
+        GeneralItemModelType,
         Body(
             examples=[
                 {
@@ -272,12 +306,16 @@ def create_item(
             ]
         ),
     ],
+    request: Request,
     db: Session = Depends(get_db),  # noqa: B008
 ) -> ItemResponse:
     """Create an item."""
 
     LOGGER.info("POST\t/v1/warehouses/%s/items", warehouse_name)
     LOGGER.debug(dumps(item))
+
+    if client := request.client:
+        item.update({"_request.client.host": client.host})
 
     res = crud.create_item(db, warehouse_name, item)
 
@@ -287,97 +325,70 @@ def create_item(
 
 
 @app.delete(
-    "/v1/warehouses/{warehouse_name}/items/{item_pk}",
+    "/v1/warehouses/{warehouse_name}/items",
     response_model=None,
     status_code=status.HTTP_204_NO_CONTENT,
     tags=[ApiTag.ITEM],
 )
 def delete_item(
-    warehouse_name: str,
-    item_pk: str,
+    request: Request,
+    warehouse_name: SqlStrPath,
     db: Session = Depends(get_db),  # noqa: B008
 ) -> None:
     """Delete an item in a warehouse."""
 
-    LOGGER.info("DELETE\t/v1/warehouses/%s/items/%s", warehouse_name, item_pk)
-
-    crud.delete_item(db, warehouse_name, item_pk)
-
-
-@app.get(
-    "/v1/warehouses/{warehouse_name}/items/{item_pk}",
-    response_model=ItemResponse,
-    tags=[ApiTag.ITEM],
-)
-def get_item(
-    warehouse_name: str,
-    item_pk: str,
-    fields: str
-    | None = Query(  # type: ignore[assignment] # noqa: B008
-        default=None,
-        example="age,salary,name,alive",
-        description="A comma-separated list of fields to return.",
-        pattern=r"^[a-zA-Z0-9_]+(,[a-zA-Z0-9_]+)*$",
-    ),
-    db: Session = Depends(get_db),  # noqa: B008
-) -> GeneralItemModelType:
-    """Get an item in a warehouse."""
-
-    LOGGER.info("GET\t/v1/warehouses/%s/items/%s", warehouse_name, item_pk)
-
-    field_names = fields.split(",") if fields else None
-
-    if not (
-        item := crud.get_item(db, warehouse_name, item_pk, field_names=field_names)
-    ):
-        warehouse = get_warehouse(warehouse_name, db=db)
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Item not found. Note: PK field is `{warehouse.item_model.primary_key_field}`",
-        )
-
-    return item
+    crud.delete_item(db, warehouse_name, search_values=dict(request.query_params))
 
 
 @app.get(
     "/v1/warehouses/{warehouse_name}/items",
-    response_model=list[ItemResponse],
-    tags=[ApiTag.ITEM],
+    response_model=Page[ItemResponse] | ItemResponse,
+    tags=[ApiTag.ITEM, ApiTag.PAGINATED],
 )
 def get_items(
-    warehouse_name: str,
-    offset: int = 0,
-    limit: int = 100,
-    fields: str
-    | None = Query(  # type: ignore[assignment] # noqa: B008
-        default=None,
-        example="age,salary,name,alive",
-        description="A comma-separated list of fields to return.",
-        pattern=r"^[a-zA-Z0-9_]+(,[a-zA-Z0-9_]+)*$",
-    ),
+    request: Request,
+    warehouse_name: SqlStrPath,
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(gt=0, le=100)] = 100,
+    fields: Annotated[
+        str,
+        Query(
+            default=None,
+            example="age,salary,name,alive",
+            description="A comma-separated list of fields to return.",
+            pattern=r"^[a-zA-Z0-9_]+(,[a-zA-Z0-9_]+)*$",
+        ),
+    ]
+    | None = None,
     db: Session = Depends(get_db),  # noqa: B008
-) -> list[ItemResponse]:
+) -> Page[GeneralItemModelType] | GeneralItemModelType:
     """Get items in a warehouse."""
 
-    LOGGER.info("GET\t/v1/warehouses/%s/items", warehouse_name)
-
     field_names = fields.split(",") if fields else None
+    search_params = {
+        k: v for k, v in request.query_params.items() if k not in ("offset", "limit")
+    }
 
     return crud.get_items(
-        db, warehouse_name, offset=offset, limit=limit, field_names=field_names
+        db,
+        warehouse_name,
+        offset=offset,
+        limit=limit,
+        field_names=field_names,
+        search_params=search_params,
     )
 
 
 @app.put(
-    "/v1/warehouses/{warehouse_name}/items/{item_pk}",
+    "/v1/warehouses/{warehouse_name}/items",
     response_model=ItemResponse,
     tags=[ApiTag.ITEM],
 )
 def update_item(
-    warehouse_name: str,
-    item_pk: str,
+    request: Request,
+    warehouse_name: SqlStrPath,
     item: Annotated[
-        dict[str, object],
+        GeneralItemModelType,
         Body(
             examples=[
                 {
@@ -392,18 +403,11 @@ def update_item(
 ) -> GeneralItemModelType:
     """Update an item in a warehouse."""
 
-    LOGGER.info("PUT\t/v1/warehouses/%s/items/%s", warehouse_name, item_pk)
-    LOGGER.debug(dumps(item))
-
-    if not crud.get_item(db, warehouse_name, item_pk):
-        warehouse = get_warehouse(warehouse_name, db=db)
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Item not found. Note: PK field is `{warehouse.item_model.primary_key_field}`",
-        )
-
     return crud.update_item(
-        db, warehouse_name=warehouse_name, item_pk=item_pk, item_update=item
+        db,
+        warehouse_name=warehouse_name,
+        pk_values=dict(request.query_params),
+        item_update=item,
     )
 
 
@@ -413,6 +417,6 @@ if __name__ == "__main__":
     LOGGER.info("Starting server...")
     LOGGER.debug("http://localhost:8002/docs")
 
-    uvicorn.run(app, host="0.0.0.0", port=8002)  # noqa: S104
+    uvicorn.run(app, host="0.0.0.0", port=8000)  # noqa: S104
 else:
     LOGGER.debug("http://localhost:8000/docs")
