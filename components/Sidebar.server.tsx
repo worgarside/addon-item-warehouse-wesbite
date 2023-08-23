@@ -22,6 +22,7 @@ const Sidebar: React.FC = async () => {
       <div className="list-group">
         {warehouses.map((warehouse: Warehouse) => (
           <Link
+            key={warehouse.name}
             className="list-group-item text-decoration-none"
             href={`/warehouse/${encodeURIComponent(warehouse.name)}`}
           >
