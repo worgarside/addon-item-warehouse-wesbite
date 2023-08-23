@@ -1,0 +1,10 @@
+---
+repos:
+
+  - repo: local
+    hooks:
+      - id: npm-precommit
+        name: Run npm precommit script
+        entry: npm run precommit
+        pass_filenames: false
+        language: node
