@@ -56,6 +56,9 @@ repos:
     hooks:
       - id: isort
         name: isort (python)
+        args:
+          - -a
+          - from __future__ import annotations
 
   - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
     rev: 0.2.3
@@ -81,14 +84,14 @@ repos:
           - --strict
 
   - repo: https://github.com/hadialqattan/pycln
-    rev: v2.2.1
+    rev: v2.2.2
     hooks:
       - id: pycln
         args:
           - --all
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.4.1
+    rev: v1.5.0
     hooks:
       - id: mypy
         args:
@@ -137,6 +140,6 @@ repos:
           - '*.svg,*.json'
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.0.282
+    rev: v0.0.284
     hooks:
       - id: ruff
