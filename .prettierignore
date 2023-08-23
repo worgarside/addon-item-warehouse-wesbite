@@ -1,11 +1,9 @@
 .github/
 .vscode/
-item_warehouse/src/app/
 
 *.yml
 *.yaml
 *.json
-
 
 *.env
 !sample.env

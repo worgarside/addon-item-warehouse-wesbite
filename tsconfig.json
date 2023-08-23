@@ -9,34 +9,28 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "baseUrl": ".",
-    "paths": {
-      "@components/*": [
-        "components/*"
-      ],
-      "@services/*": [
-        "services/*"
-      ]
-    },
     "incremental": true,
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "next-env.d.ts",
-    "next.config.js",
-    ".eslintrc.cjs",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
