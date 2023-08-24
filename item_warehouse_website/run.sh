@@ -7,6 +7,5 @@ if [[ -z "${API_BASE_URL-}" ]]
 then
     export NEXT_PUBLIC_API_BASE_URL=${API_BASE_URL_IN}
 fi
-ls -lha
 
-npx next start
+npm run start

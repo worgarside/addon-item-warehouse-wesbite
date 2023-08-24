@@ -22,4 +22,8 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN npm install --omit=dev --verbose
 
-CMD [ "npm", "start" ]
+COPY run.sh /
+RUN chmod a+x /run.sh
+
+CMD [ "/run.sh" ]
+
