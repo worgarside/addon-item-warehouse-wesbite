@@ -22,9 +22,10 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./*"
+        "./app/*"
       ]
     },
     "forceConsistentCasingInFileNames": true
@@ -33,6 +34,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "item_warehouse_website/dist//types/**/*.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": [

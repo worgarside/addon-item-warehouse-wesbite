@@ -318,3 +318,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+item_warehouse_website/src

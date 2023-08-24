@@ -1,7 +1,7 @@
-// Sidebar.server.tsx
+"use client";
 
-import React from "react";
-import { getWarehouses } from "../services/api";
+import React, { useEffect, useState } from "react";
+import { getWarehouses } from "@/services/api";
 import styles from "../styles/Sidebar.module.css";
 import Link from "next/link";
 import Icon from "@mdi/react";
@@ -11,8 +11,18 @@ interface Warehouse {
   name: string;
 }
 
-const Sidebar: React.FC = async () => {
-  const warehouses = await getWarehouses();
+const Sidebar: React.FC = () => {
+  const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
+
+  useEffect(() => {
+    getWarehouses()
+      .then((warehouses) => {
+        setWarehouses(warehouses);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   return (
     <div className={styles.sidebar}>
@@ -36,3 +46,4 @@ const Sidebar: React.FC = async () => {
 };
 
 export default Sidebar;
+export const dynamic = "force-dynamic";

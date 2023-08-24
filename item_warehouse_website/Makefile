@@ -1,15 +1,20 @@
 clean:
 	find . \( -name "node_modules" -o -name "build" -o -name "dist" -o -name ".next" \) -type d -exec rm -rf {} +
 
+build:
+	$(MAKE) install
+	@npm run precommit
+	@npm run build
+
 docker:
-	@cd item_warehouse_website && \
 	docker-compose --verbose up --build
 
 install:
-	npm install
+	@npm install
 
 website-local:
-	npm run dev
+	$(MAKE) install
+	@npm run dev
 
 # VSCode Shortcuts #
 
@@ -17,19 +22,18 @@ vscode-shortcut-1:
 	make website-local
 
 vscode-shortcut-2:
-	make docker
+	make build
 
 vscode-shortcut-3:
-	@echo "Shortcut not defined"
-	@exit 1
+	make build
+	npm start
 
 vscode-shortcut-4:
-	@echo "Shortcut not defined"
-	@exit 1
+	make build
+	make docker
 
 vscode-shortcut-5:
-	@echo "Shortcut not defined"
-	@exit 1
+	make docker
 
 vscode-shortcut-6:
 	@echo "Shortcut not defined"

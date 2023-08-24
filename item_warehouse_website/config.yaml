@@ -12,20 +12,9 @@ arch:
   - i386
 startup: before
 options:
-  database_url:
-  database_username:
-  database_password:
-  database_driver_name:
-  database_host:
-  database_port:
-  database_name:
+  api_base_url: http://homeassistant.local:8002
 schema:
-  database_url: str
-  database_username: str
-  database_password: str
-  database_driver_name: str
-  database_host: str
-  database_port: int
-  database_name: str
+  api_base_url: str
 ports:
-  8002/tcp: 8002
+  8099/tcp: 8099
+ingress: true

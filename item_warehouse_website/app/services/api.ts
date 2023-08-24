@@ -1,5 +1,3 @@
-import axios from "axios";
-
 type ItemValue = string | number | boolean | null;
 
 interface ItemsResponse {
@@ -35,50 +33,49 @@ interface WarehousesResponse {
   warehouses: Warehouse[];
 }
 
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 const getItemsFromWarehouse = async (
   warehouseName: string,
   count: string,
   pageNumber: string,
 ): Promise<ItemsResponse> => {
-  const response = await axios.get<ItemsResponse>(
-    `http://0.0.0.0:8000/v1/warehouses/${warehouseName}/items?page_size=${count}&page=${
+  const res = await fetch(
+    `${apiBaseUrl}/v1/warehouses/${warehouseName}/items?page_size=${count}&page=${
       pageNumber || 1
     }`,
   );
 
-  return response.data;
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
+
+  const data = (await res.json()) as ItemsResponse;
+  return data;
 };
 
 const getWarehouse = async (warehouseName: string): Promise<Warehouse> => {
-  const response = await axios.get<Warehouse>(
-    `http://0.0.0.0:8000/v1/warehouses/${warehouseName}`,
-  );
+  const res = await fetch(`${apiBaseUrl}/v1/warehouses/${warehouseName}`);
 
-  return response.data;
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error("Failed to fetch data");
+  }
+
+  const data = (await res.json()) as Warehouse;
+  return data;
 };
 
 const getWarehouses = async (): Promise<Warehouse[]> => {
-  const response = await axios.get<WarehousesResponse>(
-    `http://0.0.0.0:8000/v1/warehouses`,
-  );
+  const res = await fetch(`${apiBaseUrl}/v1/warehouses`);
 
-  return response.data.warehouses;
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
+
+  const data = (await res.json()) as WarehousesResponse;
+  return data.warehouses;
 };
 
-const getWarehouseSchema = async (
-  warehouseName: string,
-): Promise<WarehouseSchemaProperty> => {
-  const response = await axios.get<WarehouseSchemaProperty>(
-    `http://0.0.0.0:8000/v1/warehouses/${warehouseName}/schema`,
-  );
-
-  return response.data;
-};
-
-export {
-  getItemsFromWarehouse,
-  getWarehouse,
-  getWarehouses,
-  getWarehouseSchema,
-};
-export type { ItemsResponse };
+export { getItemsFromWarehouse, getWarehouse, getWarehouses };
+export type { ItemsResponse, Warehouse as WarehouseType };

@@ -1,0 +1,38 @@
+{
+  "name": "item-warehouse",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start -p 8099",
+    "lint": "next lint --fix",
+    "prepare": "if test \"$NODE_ENV\" != \"production\" ; then cd .. && husky install item_warehouse_website/.husky ; fi ",
+    "precommit": "next lint --fix"
+  },
+  "dependencies": {
+    "@mdi/js": "^7.2.96",
+    "@mdi/react": "^1.6.1",
+    "@types/node": "20.4.9",
+    "@types/react": "18.2.19",
+    "@types/react-dom": "18.2.7",
+    "axios": "^1.4.0",
+    "bootstrap": "^5.3.1",
+    "eslint-config-next": "13.4.19",
+    "js-cookie": "^3.0.5",
+    "next": "^13.4.19",
+    "react": "18.2.0",
+    "react-bootstrap": "^2.8.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.3",
+    "@typescript-eslint/eslint-plugin": "^6.4.1",
+    "@typescript-eslint/parser": "^6.4.1",
+    "eslint": "^8.47.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "husky": "^8.0.0",
+    "typescript": "^5.1.6"
+  }
+}
