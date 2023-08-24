@@ -1,9 +1,9 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../styles/globals.css";
+import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import styles from "../styles/layout.module.css";
-import Sidebar from "../components/Sidebar.server";
+import Sidebar from "@/components/Sidebar.client";
+import styles from "@/styles/layout.module.css";
 const poppins = Poppins({ subsets: ["latin"], weight: "300" });
 
 export const metadata: Metadata = {

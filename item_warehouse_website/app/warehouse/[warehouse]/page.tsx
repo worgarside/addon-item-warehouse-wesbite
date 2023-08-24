@@ -1,20 +1,28 @@
 import React from "react";
-import Warehouse from "./Warehouse.server";
-import PageSizeDropdown from "./PageSizeDropdown";
+import Warehouse from "@/components/Warehouse.server";
+import PageSizeDropdown from "@/components/PageSizeDropdown";
 import {
-  ItemsResponse,
+  // ItemsResponse,
+  // WarehouseType,
   getItemsFromWarehouse,
   getWarehouse,
-} from "../services/api";
+} from "@/services/api";
 
 import { cookies } from "next/headers";
-import Paginator from "./Paginator.client";
+import Paginator from "@/components/Paginator.client";
 
-const WarehousePage: React.FC<{
-  warehouseName: string;
-  page: string;
-}> = async ({ warehouseName, page }) => {
-  let item_page: ItemsResponse;
+export default async function WarehousePage({
+  params,
+  searchParams,
+}: {
+  params: { warehouse: string };
+  searchParams: { page: string };
+}) {
+  const warehouseName = params.warehouse;
+  const page = searchParams.page;
+
+  // let item_page: ItemsResponse;
+  // let warehouse: WarehouseType;
 
   const getDefaultPageSize = () => {
     const pageSizeCookie = cookies().get("pageSize");
@@ -32,8 +40,9 @@ const WarehousePage: React.FC<{
 
   const pageSize = getDefaultPageSize();
 
+  const warehouse = await getWarehouse(warehouseName);
+  const item_page = await getItemsFromWarehouse(warehouseName, pageSize, page);
   try {
-    item_page = await getItemsFromWarehouse(warehouseName, pageSize, page);
   } catch (error) {
     return (
       <div className="alert alert-warning" role="alert">
@@ -45,7 +54,6 @@ const WarehousePage: React.FC<{
     );
   }
 
-  const warehouse = await getWarehouse(warehouseName);
   const fields = Object.keys(warehouse.item_schema);
 
   return (
@@ -80,6 +88,4 @@ const WarehousePage: React.FC<{
       />
     </>
   );
-};
-
-export default WarehousePage;
+}

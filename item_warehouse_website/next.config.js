@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 
-const nextConfig = {};
+const nextConfig = {
+    // distDir: 'item_warehouse_website/dist/',
+};
 
 module.exports = nextConfig;

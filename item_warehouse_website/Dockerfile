@@ -1,18 +1,25 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
-COPY src /
+COPY .next /app/.next
+COPY .env /app/.env
+
+COPY .eslintrc.json /app
+COPY next-env.d.ts /app
+COPY next.config.js /app
+COPY package-lock.json /app
+COPY package.json /app
+COPY tsconfig.json /app
 
 # Install requirements for add-on
 RUN \
-  apk add --no-cache python3 py3-pip py3-lxml python3-dev musl-dev gcc libffi-dev
+  apk add --no-cache --update nodejs npm
 
-WORKDIR /
+WORKDIR /app
 
-RUN pip3 install -r requirements.txt
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
 
-# Copy data for add-on
-COPY run.sh /
-RUN chmod a+x /run.sh
+RUN npm install --omit=dev --verbose
 
-CMD [ "/run.sh" ]
+CMD [ "npm", "start" ]

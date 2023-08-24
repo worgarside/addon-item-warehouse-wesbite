@@ -9,4 +9,6 @@ services:
     env_file:
       - .env
     ports:
-      - 8002:8002
+      - 8003:3000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
