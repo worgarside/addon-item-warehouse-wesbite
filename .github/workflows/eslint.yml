@@ -28,4 +28,4 @@ jobs:
         run: cd item_warehouse_website && npm install
 
       - name: Run ESLint
-        run: npm run lint
+        run: cd item_warehouse_website && npm run lint
