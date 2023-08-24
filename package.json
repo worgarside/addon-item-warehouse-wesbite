@@ -1,6 +1,5 @@
 {
   "scripts": {
-    "lint": "cd item_warehouse_website && npm run lint",
     "precommit": "cd item_warehouse_website && npm run precommit"
   },
   "devDependencies": {
