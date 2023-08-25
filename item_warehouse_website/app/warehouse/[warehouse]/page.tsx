@@ -1,6 +1,6 @@
 import React from "react";
 import Warehouse from "@/components/Warehouse.server";
-import PageSizeDropdown from "@/components/PageSizeDropdown";
+import PageSizeDropdown from "@/components/PageSizeDropdown.client";
 import {
   // ItemsResponse,
   // WarehouseType,

@@ -22,11 +22,11 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".",
+    "baseUrl": "app/",
     "paths": {
-      "@/*": [
-        "./app/*"
-      ]
+      "@/components/*": ["components/*"],
+      "@/services/*": ["services/*"],
+      "@/styles/*": ["styles/*"],
     },
     "forceConsistentCasingInFileNames": true
   },
