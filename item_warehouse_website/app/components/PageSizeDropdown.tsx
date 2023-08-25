@@ -3,8 +3,8 @@
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
-import Cookie from "js-cookie";
 import { useRouter, useSearchParams } from "next/navigation";
+import { cookies } from "next/headers";
 
 const PageSizeDropdown: React.FC<{
   currentPageSize: string;
@@ -28,7 +28,7 @@ const PageSizeDropdown: React.FC<{
             if (eventKey === null) {
               return;
             }
-            Cookie.set("pageSize", eventKey);
+            cookies().set("pageSize", eventKey);
 
             if (pageNumber !== null) {
               router.push(`/warehouse/${warehouseName}`);
