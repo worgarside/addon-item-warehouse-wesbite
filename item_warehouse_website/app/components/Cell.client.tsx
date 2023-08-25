@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useEffect } from "react";
 
-import styles from "../styles/Cell.module.css";
+import styles from "@/styles/Cell.module.css";
 
 import FullContentModal from "./FullContentModal.client";
 

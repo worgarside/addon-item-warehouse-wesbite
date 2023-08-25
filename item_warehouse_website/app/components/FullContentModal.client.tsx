@@ -10,7 +10,7 @@ import {
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
-import styles from "../styles/FullContentModal.module.css";
+import styles from "@/styles/FullContentModal.module.css";
 
 import { Button, Modal } from "react-bootstrap";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../styles/Warehouse.module.css";
+import styles from "@/styles/Warehouse.module.css";
 import Item from "./Item.client";
 
 const Warehouse: React.FC<{

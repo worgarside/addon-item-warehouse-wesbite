@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { getWarehouses } from "@/services/api";
-import styles from "../styles/Sidebar.module.css";
+import styles from "@/styles/Sidebar.module.css";
 import Link from "next/link";
 import Icon from "@mdi/react";
 import { mdiWarehouse } from "@mdi/js";
