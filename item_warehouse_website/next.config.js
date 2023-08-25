@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
-    // distDir: 'item_warehouse_website/dist/',
+    reactStrictMode: true,
+    poweredByHeader: false,
 };
 
 module.exports = nextConfig;

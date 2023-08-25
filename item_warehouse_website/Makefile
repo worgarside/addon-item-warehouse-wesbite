@@ -1,9 +1,12 @@
+include .env
+export
+
 clean:
 	find . \( -name "node_modules" -o -name "build" -o -name "dist" -o -name ".next" \) -type d -exec rm -rf {} +
 
 build:
 	$(MAKE) install
-	@npm run precommit
+	@npm ci
 	@npm run build
 
 docker:
@@ -29,8 +32,8 @@ vscode-shortcut-3:
 	npm start
 
 vscode-shortcut-4:
+	make clean
 	make build
-	make docker
 
 vscode-shortcut-5:
 	make docker
