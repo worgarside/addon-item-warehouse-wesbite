@@ -1,15 +1,15 @@
 import React from "react";
-import Warehouse from "@/components/Warehouse.server";
-import PageSizeDropdown from "@/components/PageSizeDropdown.client";
+import Warehouse from "../../components/Warehouse.server";
+import PageSizeDropdown from "../../components/PageSizeDropdown.client";
 import {
   // ItemsResponse,
   // WarehouseType,
   getItemsFromWarehouse,
   getWarehouse,
-} from "@/services/api";
+} from "../../services/api";
 
 import { cookies } from "next/headers";
-import Paginator from "@/components/Paginator.client";
+import Paginator from "../../components/Paginator.client";
 
 export default async function WarehousePage({
   params,
