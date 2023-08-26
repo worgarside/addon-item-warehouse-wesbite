@@ -1,0 +1,5 @@
+{
+  "/favicon.ico/route": "/favicon.ico",
+  "/page": "/",
+  "/warehouse/[warehouse]/page": "/warehouse/[warehouse]"
+}

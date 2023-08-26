@@ -1,0 +1,20 @@
+---
+name: "Item Warehouse: Website"
+description: A warehouse with an API on the front of it
+version: 1.0.0
+slug: item_warehouse_website
+init: false
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+startup: before
+options:
+  api_base_url: http://homeassistant.local:8002
+schema:
+  api_base_url: str
+ports:
+  8099/tcp: 8099
+ingress: true
