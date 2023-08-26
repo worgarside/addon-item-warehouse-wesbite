@@ -12,7 +12,7 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN npm ci
+RUN npm ci --ignore-scripts
 RUN npm run build
 
 COPY run.sh /
