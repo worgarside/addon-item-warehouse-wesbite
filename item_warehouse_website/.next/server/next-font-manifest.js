@@ -1,0 +1,1 @@
+self.__NEXT_FONT_MANIFEST='{"pages":{},"app":{"/home/runner/work/addon-item-warehouse-website/addon-item-warehouse-website/item_warehouse_website/app/layout":["static/media/c04551857776278f-s.p.woff2"]},"appUsingSizeAdjust":true,"pagesUsingSizeAdjust":false}';
