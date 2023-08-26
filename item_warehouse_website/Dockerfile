@@ -2,7 +2,6 @@ ARG BUILD_FROM
 FROM $BUILD_FROM
 
 COPY .next /app/.next
-COPY .env /app/.env
 
 COPY .eslintrc.json /app
 COPY next-env.d.ts /app
