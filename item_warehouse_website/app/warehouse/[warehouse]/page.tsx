@@ -2,8 +2,8 @@ import React from "react";
 import Warehouse from "../../components/Warehouse.server";
 import PageSizeDropdown from "../../components/PageSizeDropdown.client";
 import {
-  // ItemsResponse,
-  // WarehouseType,
+  ItemsResponse,
+  WarehouseType,
   getItemsFromWarehouse,
   getWarehouse,
 } from "../../services/api";
@@ -21,8 +21,8 @@ export default async function WarehousePage({
   const warehouseName = params.warehouse;
   const page = searchParams.page;
 
-  // let item_page: ItemsResponse;
-  // let warehouse: WarehouseType;
+  let item_page: ItemsResponse;
+  let warehouse: WarehouseType;
 
   const getDefaultPageSize = () => {
     const pageSizeCookie = cookies().get("pageSize");
@@ -39,10 +39,9 @@ export default async function WarehousePage({
   };
 
   const pageSize = getDefaultPageSize();
-
-  const warehouse = await getWarehouse(warehouseName);
-  const item_page = await getItemsFromWarehouse(warehouseName, pageSize, page);
   try {
+    warehouse = await getWarehouse(warehouseName);
+    item_page = await getItemsFromWarehouse(warehouseName, pageSize, page);
   } catch (error) {
     return (
       <div className="alert alert-warning" role="alert">
