@@ -18,5 +18,5 @@ schema:
 ingress: true
 ingress_port: 3000
 ports:
-  8003/tcp: 3000
+  3000/tcp: 8003
 webui: http://[HOST]:[PORT:3000]
