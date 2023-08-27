@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getWarehouses } from "../services/api";
+import { apiBaseUrl, getWarehouses } from "../services/api";
 import styles from "../styles/Sidebar.module.css";
 import Link from "next/link";
 import Icon from "@mdi/react";
 import { mdiWarehouse } from "@mdi/js";
+import { OverlayTrigger, Tooltip, TooltipProps } from "react-bootstrap";
 
 interface Warehouse {
   name: string;
@@ -13,6 +14,22 @@ interface Warehouse {
 
 const Sidebar: React.FC = () => {
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
+
+  const renderTooltip = (
+    props: React.JSX.IntrinsicAttributes &
+      TooltipProps &
+      React.RefAttributes<HTMLDivElement>,
+  ) => (
+    <Tooltip id="button-tooltip" {...props}>
+      <Link
+        className={styles.tooltip}
+        target="_blank"
+        href={`${apiBaseUrl}/docs`}
+      >
+        {apiBaseUrl}
+      </Link>
+    </Tooltip>
+  );
 
   useEffect(() => {
     getWarehouses()
@@ -26,9 +43,15 @@ const Sidebar: React.FC = () => {
 
   return (
     <div className={styles.sidebar}>
-      <h2 className={`text-center my-1 fw-bold ${styles.header}`}>
-        Warehouses
-      </h2>
+      <OverlayTrigger
+        placement="bottom"
+        delay={{ show: 250, hide: 400 }}
+        overlay={renderTooltip}
+      >
+        <h2 className={`text-center my-1 fw-bold ${styles.header}`}>
+          Warehouses
+        </h2>
+      </OverlayTrigger>
       <div className="list-group">
         {warehouses.map((warehouse: Warehouse) => (
           <Link

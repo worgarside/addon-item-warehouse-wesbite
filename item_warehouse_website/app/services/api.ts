@@ -77,5 +77,5 @@ const getWarehouses = async (): Promise<Warehouse[]> => {
   return data.warehouses;
 };
 
-export { getItemsFromWarehouse, getWarehouse, getWarehouses };
+export { getItemsFromWarehouse, getWarehouse, getWarehouses, apiBaseUrl };
 export type { ItemsResponse, Warehouse as WarehouseType };
