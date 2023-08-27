@@ -22,6 +22,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           cache: npm
+          cache-dependency-path: item_warehouse_website/package-lock.json
           node-version: "18"
 
       - name: Install Dependencies

@@ -4,6 +4,10 @@
     "folders": [
         {
             "path": ".."
+        },
+        {
+            "name": "SSH FS - /config",
+            "uri": "ssh://hasspi-config/config"
         }
     ]
 }
