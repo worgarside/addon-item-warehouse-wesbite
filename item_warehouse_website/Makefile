@@ -53,6 +53,3 @@ vscode-shortcut-8:
 vscode-shortcut-9:
 	@echo "Shortcut not defined"
 	@exit 1
-
-%:
-	@:

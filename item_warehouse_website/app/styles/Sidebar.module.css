@@ -2,3 +2,7 @@
   background-color: var(--bs-secondary-bg);
   width: 250px;
 }
+
+.tooltip {
+  font-size: 0.8em;
+}
