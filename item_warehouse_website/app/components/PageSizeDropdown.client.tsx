@@ -6,6 +6,9 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import Cookie from "js-cookie";
 import { useRouter, useSearchParams } from "next/navigation";
 
+const hassioRefererPath: string =
+  process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH || "";
+
 const PageSizeDropdown: React.FC<{
   currentPageSize: string;
   warehouseName: string;
@@ -31,7 +34,7 @@ const PageSizeDropdown: React.FC<{
             Cookie.set("pageSize", eventKey);
 
             if (pageNumber !== null) {
-              router.push(`/warehouse/${warehouseName}`);
+              router.push(`${hassioRefererPath}/?warehouse=${warehouseName}`);
             }
 
             router.refresh();
