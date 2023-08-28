@@ -6,8 +6,10 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import Cookie from "js-cookie";
 import { useRouter, useSearchParams } from "next/navigation";
 
-const hassioRefererPath: string =
-  process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH || "";
+const hassioRefererPath: string = process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH
+  ? "/" +
+    process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH.replace(/(^\/+)|(\/+$)/g, "")
+  : "";
 
 const PageSizeDropdown: React.FC<{
   currentPageSize: string;
