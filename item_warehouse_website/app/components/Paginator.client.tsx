@@ -4,6 +4,9 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import Pagination from "react-bootstrap/Pagination";
 
+const hassioRefererPath: string =
+  process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH || "";
+
 const Paginator: React.FC<{
   currentPage: number;
   totalPages: number;
@@ -18,7 +21,9 @@ const Paginator: React.FC<{
         key={number}
         active={number === currentPage}
         onClick={() => {
-          router.push(`/warehouse/${warehouseName}?page=${number}`);
+          router.push(
+            `${hassioRefererPath}/?warehouse=${warehouseName}&page=${number}`,
+          );
           router.refresh();
         }}
       >

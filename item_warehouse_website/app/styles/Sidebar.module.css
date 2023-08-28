@@ -3,6 +3,10 @@
   width: 250px;
 }
 
+.warehouseItem {
+  cursor: pointer;
+}
+
 .tooltip {
   font-size: 0.8em;
 }

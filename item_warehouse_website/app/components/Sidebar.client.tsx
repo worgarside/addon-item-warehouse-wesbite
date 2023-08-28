@@ -1,19 +1,30 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { apiBaseUrl, getWarehouses } from "../services/api";
+import React from "react";
+import { apiBaseUrl } from "../services/api";
 import styles from "../styles/Sidebar.module.css";
 import Link from "next/link";
 import Icon from "@mdi/react";
 import { mdiWarehouse } from "@mdi/js";
-import { OverlayTrigger, Tooltip, TooltipProps } from "react-bootstrap";
+import {
+  ListGroup,
+  OverlayTrigger,
+  Tooltip,
+  TooltipProps,
+} from "react-bootstrap";
+import { useRouter } from "next/navigation";
 
 interface Warehouse {
   name: string;
 }
 
-const Sidebar: React.FC = () => {
-  const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
+const hassioRefererPath: string =
+  process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH || "";
+
+const Sidebar: React.FC<{
+  warehouses: Warehouse[];
+}> = ({ warehouses }) => {
+  const router = useRouter();
 
   const renderTooltip = (
     props: React.JSX.IntrinsicAttributes &
@@ -31,16 +42,6 @@ const Sidebar: React.FC = () => {
     </Tooltip>
   );
 
-  useEffect(() => {
-    getWarehouses()
-      .then((warehouses) => {
-        setWarehouses(warehouses);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
-
   return (
     <div className={styles.sidebar}>
       <OverlayTrigger
@@ -52,18 +53,22 @@ const Sidebar: React.FC = () => {
           Warehouses
         </h2>
       </OverlayTrigger>
-      <div className="list-group">
+      <ListGroup>
         {warehouses.map((warehouse: Warehouse) => (
-          <Link
+          <ListGroup.Item
             key={warehouse.name}
-            className="list-group-item text-decoration-none"
-            href={`/warehouse/${encodeURIComponent(warehouse.name)}`}
+            active={false}
+            className={styles.warehouseItem}
+            onClick={() => {
+              router.push(`${hassioRefererPath}/?warehouse=${warehouse.name}`);
+              router.refresh();
+            }}
           >
             <Icon className="me-2" path={mdiWarehouse} size={1} />
             {warehouse.name}
-          </Link>
+          </ListGroup.Item>
         ))}
-      </div>
+      </ListGroup>
     </div>
   );
 };
