@@ -18,16 +18,16 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  if (!apiBaseUrl)  {
+  if (!apiBaseUrl) {
     return (
       <html lang="en">
         <body className={poppins.className}>
           <div className="alert alert-warning" role="alert">
-              <h1>API Base URL not set</h1>
-              <p>
-                The API base URL is not set. Please set the{" "}
-                <code>NEXT_PUBLIC_API_BASE_URL</code> environment variable.
-              </p>  
+            <h1>API Base URL not set</h1>
+            <p>
+              The API base URL is not set. Please set the{" "}
+              <code>NEXT_PUBLIC_API_BASE_URL</code> environment variable.
+            </p>
           </div>
         </body>
       </html>
