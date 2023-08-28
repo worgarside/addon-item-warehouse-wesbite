@@ -9,7 +9,7 @@ let nextConfig = {
 let hassioRefererPath = process.env.HASSIO_REFERER_PATH || "";
 
 if (hassioRefererPath) {
-    hassioRefererPath = '/' + hassioRefererPath.replace(/^\/|\/$/g, '');
+    hassioRefererPath = '/' + hassioRefererPath.replace(/(^\/+)|(\/+$)/g, '');
 
     nextConfig = {
         ...nextConfig,
