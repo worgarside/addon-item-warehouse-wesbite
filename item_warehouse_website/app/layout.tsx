@@ -1,5 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./styles/globals.css";
+import { getWarehouses } from "services/api";
+
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import Sidebar from "./components/Sidebar.client";
@@ -11,16 +13,18 @@ export const metadata: Metadata = {
   description: "A database with an API in front of it.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const warehouses = await getWarehouses();
+
   return (
     <html lang="en">
       <body className={poppins.className}>
         <div className={styles.container}>
-          <Sidebar />
+          <Sidebar warehouses={warehouses} />
           <div className={styles.content}>{children}</div>
         </div>
       </body>

@@ -15,8 +15,10 @@ options:
   api_base_url: http://homeassistant.local:8002
 schema:
   api_base_url: str
+  hassio_referer_path: str?
+  redirect_path: str?
 ingress: true
 ingress_port: 3000
 ports:
-  3000/tcp: 8003
+  3000/tcp: 3000
 webui: http://[HOST]:[PORT:3000]
