@@ -43,6 +43,9 @@ const PageSizeDropdown: React.FC<{
             router.refresh();
           }}
         >
+          {process.env.NODE_ENV !== "production" ? (
+            <Dropdown.Item eventKey="1">1</Dropdown.Item>
+          ) : null}
           <Dropdown.Item eventKey="5">5</Dropdown.Item>
           <Dropdown.Item eventKey="10">10</Dropdown.Item>
           <Dropdown.Item eventKey="20">20</Dropdown.Item>

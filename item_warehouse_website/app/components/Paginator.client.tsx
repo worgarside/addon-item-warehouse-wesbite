@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import React from "react";
 import Pagination from "react-bootstrap/Pagination";
+import styles from "../styles/Paginator.module.css";
 
 const hassioRefererPath: string = process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH
   ? "/" +
@@ -10,35 +11,88 @@ const hassioRefererPath: string = process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH
     "/"
   : "";
 
-const Paginator: React.FC<{
+interface PaginatorProps {
   currentPage: number;
   totalPages: number;
   warehouseName: string;
-}> = ({ currentPage, totalPages, warehouseName }) => {
+}
+
+const Paginator: React.FC<PaginatorProps> = ({
+  currentPage,
+  totalPages,
+  warehouseName,
+}) => {
   const router = useRouter();
+  const config = {
+    maxShowPages: 5,
+    showEitherSideOfCurrent: 1,
+  };
+
+  const PaginationItem: React.FC<{ number: number }> = ({ number }) => (
+    <Pagination.Item
+      key={number}
+      active={number === currentPage}
+      onClick={() => {
+        router.push(
+          `${hassioRefererPath}/?warehouse=${warehouseName}&page=${number}`,
+        );
+        router.refresh();
+      }}
+      className={styles.paginatorItem}
+    >
+      {number}
+    </Pagination.Item>
+  );
+
   const items = [];
 
-  for (let number = 1; number <= totalPages; number++) {
-    items.push(
-      <Pagination.Item
-        key={number}
-        active={number === currentPage}
-        onClick={() => {
-          router.push(
-            `${hassioRefererPath}/?warehouse=${warehouseName}&page=${number}`,
-          );
-          router.refresh();
-        }}
-      >
-        {number}
-      </Pagination.Item>,
-    );
+  if (totalPages <= config.maxShowPages) {
+    for (let number = 1; number <= totalPages; number++) {
+      items.push(<PaginationItem number={number} />);
+    }
+  } else {
+    items.push(<PaginationItem number={1} />);
 
-    // if (number === 1) {
-    //   if (currentPage > 3) {
-    //     items.push(<Pagination.Ellipsis key="ellipsis-first" />);
-    //   }
-    // }
+    if (currentPage < config.maxShowPages) {
+      for (
+        let number = 2;
+        number <= Math.max(config.maxShowPages, currentPage + 1);
+        number++
+      ) {
+        items.push(<PaginationItem number={number} />);
+      }
+
+      items.push(<Pagination.Ellipsis key="ellipsis-last" />);
+
+      items.push(<PaginationItem number={totalPages} />);
+    } else if (currentPage > totalPages - config.maxShowPages + 1) {
+      items.push(<Pagination.Ellipsis key="ellipsis-first" />);
+
+      for (
+        let number = Math.min(
+          totalPages - config.maxShowPages + 1,
+          currentPage - 1,
+        );
+        number <= totalPages;
+        number++
+      ) {
+        items.push(<PaginationItem number={number} />);
+      }
+    } else {
+      items.push(<Pagination.Ellipsis key="ellipsis-first" />);
+
+      for (
+        let number = currentPage - config.showEitherSideOfCurrent;
+        number <= currentPage + config.showEitherSideOfCurrent;
+        number++
+      ) {
+        items.push(<PaginationItem number={number} />);
+      }
+
+      items.push(<Pagination.Ellipsis key="ellipsis-last" />);
+
+      items.push(<PaginationItem number={totalPages} />);
+    }
   }
 
   return (
