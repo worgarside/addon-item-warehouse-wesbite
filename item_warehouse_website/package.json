@@ -31,7 +31,9 @@
     "typescript": "5.2.2"
   },
   "devDependencies": {
+    "@types/sass": "^1.45.0",
     "husky": "^8.0.0",
-    "prettier": "^3.0.2"
+    "prettier": "^3.0.2",
+    "sass": "^1.66.1"
   }
 }

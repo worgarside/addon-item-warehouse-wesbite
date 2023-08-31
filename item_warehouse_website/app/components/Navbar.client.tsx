@@ -3,7 +3,7 @@
 import React from "react";
 import PageSizeDropdown from "./PageSizeDropdown.client";
 import { ItemsResponse, WarehouseType } from "../services/api";
-
+import styles from "../styles/NavBar.module.scss";
 import Paginator from "./Paginator.client";
 import { Nav, Container, Navbar } from "react-bootstrap";
 
@@ -13,7 +13,7 @@ const NavBar: React.FC<{
   pageSize: string;
 }> = ({ warehouse, item_page, pageSize }) => {
   return (
-    <Navbar className="bg-light">
+    <Navbar className={styles.navBar}>
       <Container fluid={true}>
         <Navbar.Collapse>
           <Nav className="me-auto mb-2 mb-lg-0">

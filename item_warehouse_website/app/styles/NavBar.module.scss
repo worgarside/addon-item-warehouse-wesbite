@@ -1,0 +1,14 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+
+.navBar {
+    background-color: $body-tertiary-bg;
+}
+
+@include color-mode(dark) {
+    .navBar {
+      background-color: $blue-900;
+    }
+  }

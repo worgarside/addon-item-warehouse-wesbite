@@ -1,0 +1,23 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+
+.warehouseItem {
+  cursor: pointer;
+}
+
+.tooltip {
+  font-size: 0.8em;
+}
+
+.sidebar {
+  background-color: $body-secondary-bg;
+  width: 250px;
+}
+
+@include color-mode(dark) {
+  .sidebar {
+    background-color: #151b20;
+  }
+}

@@ -1,11 +1,10 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./styles/globals.css";
 import { apiBaseUrl, getWarehouses } from "services/api";
 
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import Sidebar from "./components/Sidebar.client";
-import styles from "./styles/layout.module.css";
+import styles from "./styles/layout.module.scss";
 const poppins = Poppins({ subsets: ["latin"], weight: "300" });
 
 export const metadata: Metadata = {
@@ -37,7 +36,7 @@ export default async function RootLayout({
   const warehouses = await getWarehouses();
 
   return (
-    <html lang="en">
+    <html lang="en" data-bs-theme="dark">
       <body className={poppins.className}>
         <div className={styles.container}>
           <Sidebar warehouses={warehouses} />

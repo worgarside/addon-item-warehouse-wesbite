@@ -2,7 +2,7 @@
 
 import React from "react";
 import { apiBaseUrl } from "../services/api";
-import styles from "../styles/Sidebar.module.css";
+import styles from "../styles/Sidebar.module.scss";
 import Link from "next/link";
 import Icon from "@mdi/react";
 import { mdiWarehouse } from "@mdi/js";
