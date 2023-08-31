@@ -1,0 +1,31 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
+.settings {
+  position: absolute;
+  bottom: 0;
+  width: inherit;
+  cursor: pointer;
+}
+
+.settingDescription {
+  font-size: 0.8em;
+}
+
+button.button {
+  padding: 0 !important;
+  margin: 0.5em $spacer * 0.25;
+  width: $spacer * 2;
+  height: 1.9em;
+  background-color: $body-tertiary-color;
+  border: none;
+}
+
+.icon {
+  padding: 0;
+  margin: 0;
+}
+
+.modalBody {
+  height: 75vh;
+}

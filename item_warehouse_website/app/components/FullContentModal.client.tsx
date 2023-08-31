@@ -58,7 +58,7 @@ const FullContentModal: React.FC<ModalProps> = ({ header, content }) => {
           <Modal.Title>
             <code>{header}</code>
           </Modal.Title>
-          <div className={styles.spacer}></div>
+          <div className="flex-grow-1"></div>
           <Button onClick={copyToClipboard} className={styles.button}>
             <Icon
               path={isCopied ? mdiClipboardCheckOutline : mdiClipboardOutline}

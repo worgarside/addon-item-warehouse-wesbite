@@ -15,7 +15,11 @@ const Warehouse: React.FC<{
           <thead className="thead-dark">
             <tr>
               {fields.map((header) => (
-                <th scope="col" key={header} className="font-monospace">
+                <th
+                  scope="col"
+                  key={header}
+                  className="font-monospace user-select-none"
+                >
                   {header}
                 </th>
               ))}

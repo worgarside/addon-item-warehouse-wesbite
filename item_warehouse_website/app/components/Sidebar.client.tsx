@@ -13,6 +13,7 @@ import {
   TooltipProps,
 } from "react-bootstrap";
 import { useRouter } from "next/navigation";
+import SettingsModal from "./SettingsModal.client";
 
 interface Warehouse {
   name: string;
@@ -49,19 +50,21 @@ const Sidebar: React.FC<{
     <div className={styles.sidebar}>
       <OverlayTrigger
         placement="bottom"
-        delay={{ show: 250, hide: 400 }}
+        delay={{ show: 250, hide: 1000 }}
         overlay={renderTooltip}
       >
-        <h2 className={`text-center my-1 fw-bold ${styles.header}`}>
+        <h2
+          className={`text-center my-1 fw-bold user-select-none ${styles.header}`}
+        >
           Warehouses
         </h2>
       </OverlayTrigger>
-      <ListGroup>
+      <ListGroup className={`list-group-flush mb-auto`}>
         {warehouses.map((warehouse: Warehouse) => (
           <ListGroup.Item
             key={warehouse.name}
             active={false}
-            className={styles.warehouseItem}
+            className={`list-group-item list-group-item-action ${styles.warehouseItem}`}
             onClick={() => {
               router.push(`${hassioRefererPath}/?warehouse=${warehouse.name}`);
               router.refresh();
@@ -72,9 +75,10 @@ const Sidebar: React.FC<{
           </ListGroup.Item>
         ))}
       </ListGroup>
+
+      <SettingsModal />
     </div>
   );
 };
 
 export default Sidebar;
-export const dynamic = "force-dynamic";

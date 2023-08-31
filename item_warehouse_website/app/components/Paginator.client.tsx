@@ -30,6 +30,9 @@ const Paginator: React.FC<PaginatorProps> = ({
 
   const PaginationItem: React.FC<{ number: number }> = ({ number }) => (
     <Pagination.Item
+      linkClassName={`${styles.paginatorItemLink} ${
+        number === currentPage ? styles.paginatorItemLinkActive : ""
+      }`}
       key={number}
       active={number === currentPage}
       onClick={() => {
