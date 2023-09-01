@@ -65,11 +65,21 @@ const Paginator: React.FC<PaginatorProps> = ({
         items.push(<PaginationItem number={number} />);
       }
 
-      items.push(<Pagination.Ellipsis key="ellipsis-last" />);
+      items.push(
+        <Pagination.Ellipsis
+          key="ellipsis-last"
+          linkClassName={styles.paginatorItemLink}
+        />,
+      );
 
       items.push(<PaginationItem number={totalPages} />);
     } else if (currentPage > totalPages - config.maxShowPages + 1) {
-      items.push(<Pagination.Ellipsis key="ellipsis-first" />);
+      items.push(
+        <Pagination.Ellipsis
+          key="ellipsis-first"
+          linkClassName={styles.paginatorItemLink}
+        />,
+      );
 
       for (
         let number = Math.min(
@@ -82,7 +92,12 @@ const Paginator: React.FC<PaginatorProps> = ({
         items.push(<PaginationItem number={number} />);
       }
     } else {
-      items.push(<Pagination.Ellipsis key="ellipsis-first" />);
+      items.push(
+        <Pagination.Ellipsis
+          key="ellipsis-first"
+          linkClassName={styles.paginatorItemLink}
+        />,
+      );
 
       for (
         let number = currentPage - config.showEitherSideOfCurrent;
@@ -92,14 +107,19 @@ const Paginator: React.FC<PaginatorProps> = ({
         items.push(<PaginationItem number={number} />);
       }
 
-      items.push(<Pagination.Ellipsis key="ellipsis-last" />);
+      items.push(
+        <Pagination.Ellipsis
+          key="ellipsis-last"
+          linkClassName={styles.paginatorItemLink}
+        />,
+      );
 
       items.push(<PaginationItem number={totalPages} />);
     }
   }
 
   return (
-    <Pagination size="sm" className="mt-3">
+    <Pagination size="sm" className="mt-3 me-3">
       {items}
     </Pagination>
   );

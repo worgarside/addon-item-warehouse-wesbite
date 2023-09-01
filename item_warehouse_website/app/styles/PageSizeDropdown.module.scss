@@ -1,0 +1,54 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+.dropdown {
+    min-width: 0;
+    width: 125px;
+}
+
+.dropdownToggle {
+    width: inherit;
+    color: $white !important;
+    background-color: $pink-200 !important;
+    border-color: $pink-300 !important;
+}
+
+.dropdownItem {
+    min-width: 0;
+    width: inherit;
+    &:hover {
+    color: $white !important;
+    background-color: $pink-200 !important;
+      }
+}
+
+.dropdownItemActive {
+    background-color: $pink-200 !important;
+}
+
+.dropdownMenu {
+    min-width: 0;
+    background-color: $body-bg !important;
+    width: inherit;
+}
+
+@include color-mode(dark) {
+    .dropdownToggle {
+        color: $gray-400 !important;
+        background-color: $blue-800 !important;
+        border-color: $blue-600 !important;
+    }
+    
+    .dropdownItem{ &:hover {
+            background-color: $blue-800 !important;
+          }}
+    
+    .dropdownItemActive {
+        background-color: $blue-800 !important;
+    }
+    
+    .dropdownMenu {
+        background-color: $blue-900 !important;
+    }
+}

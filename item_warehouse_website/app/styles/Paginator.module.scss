@@ -16,7 +16,7 @@
 span.paginatorItemLinkActive {
     background-color: $pink-200 !important;
     border-color: $pink-300 !important;
-    color: white !important;
+    color: $white !important;
 }
 
 @include color-mode(dark) {
@@ -28,7 +28,7 @@ span.paginatorItemLinkActive {
     }
 
     span.paginatorItemLinkActive {
-        color: $gray-500 !important;
+        color: $gray-400 !important;
         background-color: $blue-800 !important;
         border-color: $blue-600 !important;
     }
