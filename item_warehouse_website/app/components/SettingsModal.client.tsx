@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Cookies from "js-cookie";
+import React, { useState } from "react";
 import styles from "../styles/SettingsModal.module.scss";
 import Icon from "@mdi/react";
 import { mdiClose, mdiTune } from "@mdi/js";
@@ -15,7 +14,7 @@ import {
   Tab,
   Tabs,
 } from "react-bootstrap";
-import Cookie from "js-cookie";
+import { useSettings } from "./SettingsContext.client";
 
 const Setting: React.FC<{
   name: string;
@@ -23,22 +22,10 @@ const Setting: React.FC<{
   description: string;
   callback?: (value: boolean) => void;
 }> = ({ name, initialValue, description, callback }) => {
-  const slug = name.toLowerCase().replace(" ", "-");
-  const cookieValue = Cookie.get(slug) === "1" ? true : initialValue;
-  const [settingState, setSettingState] = useState(cookieValue);
-
-  useEffect(() => {
-    Cookies.set(slug, settingState ? "1" : "0");
-  }, [slug, settingState]);
-
-  const handleToggle = () => {
-    const newState = !settingState;
-    setSettingState(newState);
-
-    if (typeof callback === "function") {
-      callback(newState);
-    }
-  };
+  const slug = name
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]/g, "");
 
   return (
     <Row className="border-bottom">
@@ -55,8 +42,8 @@ const Setting: React.FC<{
         <Form.Check
           type="switch"
           id={slug}
-          checked={settingState}
-          onChange={handleToggle}
+          checked={initialValue}
+          onChange={callback}
           className="my-auto ms-auto"
         />
       </Form>
@@ -64,32 +51,24 @@ const Setting: React.FC<{
   );
 };
 
-const DarkModeSetting: React.FC = ({}) => {
-  useEffect(() => {
-    const cookieValue = Cookie.get("dark-mode") === "1";
-    const initialTheme = cookieValue ? "dark" : "light";
-    document.documentElement.setAttribute("data-bs-theme", initialTheme);
-  }, []);
-
-  const handleDarkModeToggle = (value: boolean) => {
-    const newTheme = value ? "dark" : "light";
-    document.documentElement.setAttribute("data-bs-theme", newTheme);
-  };
-
-  return (
-    <Setting
-      name="Dark Mode"
-      initialValue={false}
-      description="Enable dark mode"
-      callback={handleDarkModeToggle}
-    />
-  );
-};
-
 const SettingsPanel: React.FC = ({}) => {
+  const { darkMode, toggleDarkMode } = useSettings();
+  const { showTooltip, toggleShowTooltip } = useSettings();
+
   return (
     <Container>
-      <DarkModeSetting />
+      <Setting
+        name="Dark Mode"
+        initialValue={darkMode}
+        description="Enable dark mode"
+        callback={toggleDarkMode}
+      />
+      <Setting
+        name="API Documentation Tooltip"
+        initialValue={showTooltip}
+        description={`Display a tooltip with a link to the API documentation when you hover over "Warehouses"`}
+        callback={toggleShowTooltip}
+      />
     </Container>
   );
 };

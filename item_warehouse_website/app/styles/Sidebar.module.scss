@@ -7,8 +7,19 @@
   cursor: pointer;
 }
 
-.tooltip {
-  font-size: 0.8em;
+.tooltip [class$="inner"] {
+  background-color: $pink-300 !important;
+  border: 1px solid $pink-300 !important;
+}
+
+.tooltip [class$="arrow"]::before  {
+  border-bottom: 5px solid $pink-300 !important;
+}
+
+.tooltipLink {
+  font-size: 1em;
+  color: $white;
+  text-decoration: none;
 }
 
 .sidebar {
@@ -20,4 +31,17 @@
   .sidebar {
     background-color: #151b20;
   }
+  .tooltip [class$="inner"] {
+    background-color: $blue-800 !important;
+    border: 1px solid $blue-800 !important;
+  }
+
+  .tooltip [class$="arrow"]::before  {
+    border-bottom: 5px solid $blue-800 !important;
+  }
+  .tooltipLink {
+
+  color: $gray-500 !important;
+}
+
 }

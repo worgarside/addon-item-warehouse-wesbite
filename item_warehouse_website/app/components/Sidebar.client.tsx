@@ -14,6 +14,7 @@ import {
 } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 import SettingsModal from "./SettingsModal.client";
+import { useSettings } from "./SettingsContext.client";
 
 interface Warehouse {
   name: string;
@@ -30,14 +31,16 @@ const Sidebar: React.FC<{
 }> = ({ warehouses }) => {
   const router = useRouter();
 
+  const { showTooltip } = useSettings();
+
   const renderTooltip = (
     props: React.JSX.IntrinsicAttributes &
       TooltipProps &
       React.RefAttributes<HTMLDivElement>,
   ) => (
-    <Tooltip id="button-tooltip" {...props}>
+    <Tooltip id="api-docs-tooltip" className={styles.tooltip} {...props}>
       <Link
-        className={styles.tooltip}
+        className={styles.tooltipLink}
         target="_blank"
         href={`${apiBaseUrl}/docs`}
       >
@@ -51,7 +54,7 @@ const Sidebar: React.FC<{
       <OverlayTrigger
         placement="bottom"
         delay={{ show: 250, hide: 1000 }}
-        overlay={renderTooltip}
+        overlay={showTooltip ? renderTooltip : <></>}
       >
         <h2
           className={`text-center my-1 fw-bold user-select-none ${styles.header}`}

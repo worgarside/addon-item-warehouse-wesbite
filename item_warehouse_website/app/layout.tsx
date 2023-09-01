@@ -6,6 +6,7 @@ import { Poppins } from "next/font/google";
 import Sidebar from "./components/Sidebar.client";
 import styles from "./styles/layout.module.scss";
 import { cookies } from "next/headers";
+import { SettingsProvider } from "./components/SettingsContext.client";
 const poppins = Poppins({ subsets: ["latin"], weight: "300" });
 
 export const metadata: Metadata = {
@@ -36,15 +37,16 @@ export default async function RootLayout({
 
   const warehouses = await getWarehouses();
 
-  const colorMode =
-    cookies().get("dark-mode")?.value === "1" ? "dark" : "light";
+  const colorMode = cookies().get("darkMode")?.value === "1" ? "dark" : "light";
 
   return (
     <html lang="en" data-bs-theme={colorMode}>
       <body className={poppins.className}>
         <div className={styles.container}>
-          <Sidebar warehouses={warehouses} />
-          <div className={styles.content}>{children}</div>
+          <SettingsProvider>
+            <Sidebar warehouses={warehouses} />
+            <div className={styles.content}>{children}</div>
+          </SettingsProvider>
         </div>
       </body>
     </html>

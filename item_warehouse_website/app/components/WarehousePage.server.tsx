@@ -16,8 +16,6 @@ const WarehousePage: React.FC<{
 }> = async ({ warehouseName, page }) => {
   const pageSize = cookies().get("pageSize")?.value || "10";
 
-  console.log(cookies());
-
   let item_page: ItemsResponse;
   let warehouse: WarehouseType;
 
