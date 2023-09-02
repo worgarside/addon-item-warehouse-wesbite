@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import Pagination from "react-bootstrap/Pagination";
 import styles from "../styles/Paginator.module.scss";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 
 const hassioRefererPath: string = process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH
   ? "/" +
@@ -17,6 +18,37 @@ interface PaginatorProps {
   warehouseName: string;
 }
 
+interface PaginationItemProps {
+  number: number;
+  currentPage: number;
+  warehouseName: string;
+  router: AppRouterInstance;
+}
+
+const PaginationItem: React.FC<PaginationItemProps> = ({
+  number,
+  currentPage,
+  warehouseName,
+  router,
+}) => (
+  <Pagination.Item
+    linkClassName={`${styles.paginatorItemLink} ${
+      number === currentPage ? styles.paginatorItemLinkActive : ""
+    }`}
+    key={number}
+    active={number === currentPage}
+    onClick={() => {
+      router.push(
+        `${hassioRefererPath}/?warehouse=${warehouseName}&page=${number}`,
+      );
+      router.refresh();
+    }}
+    className={styles.paginatorItem}
+  >
+    {number}
+  </Pagination.Item>
+);
+
 const Paginator: React.FC<PaginatorProps> = ({
   currentPage,
   totalPages,
@@ -27,34 +59,28 @@ const Paginator: React.FC<PaginatorProps> = ({
     maxShowPages: 5,
     showEitherSideOfCurrent: 1,
   };
-
-  const PaginationItem: React.FC<{ number: number }> = ({ number }) => (
-    <Pagination.Item
-      linkClassName={`${styles.paginatorItemLink} ${
-        number === currentPage ? styles.paginatorItemLinkActive : ""
-      }`}
-      key={number}
-      active={number === currentPage}
-      onClick={() => {
-        router.push(
-          `${hassioRefererPath}/?warehouse=${warehouseName}&page=${number}`,
-        );
-        router.refresh();
-      }}
-      className={styles.paginatorItem}
-    >
-      {number}
-    </Pagination.Item>
-  );
-
   const items = [];
 
   if (totalPages <= config.maxShowPages) {
     for (let number = 1; number <= totalPages; number++) {
-      items.push(<PaginationItem number={number} />);
+      items.push(
+        <PaginationItem
+          number={number}
+          currentPage={currentPage}
+          warehouseName={warehouseName}
+          router={router}
+        />,
+      );
     }
   } else {
-    items.push(<PaginationItem number={1} />);
+    items.push(
+      <PaginationItem
+        number={1}
+        currentPage={currentPage}
+        warehouseName={warehouseName}
+        router={router}
+      />,
+    );
 
     if (currentPage < config.maxShowPages) {
       for (
@@ -62,7 +88,14 @@ const Paginator: React.FC<PaginatorProps> = ({
         number <= Math.max(config.maxShowPages, currentPage + 1);
         number++
       ) {
-        items.push(<PaginationItem number={number} />);
+        items.push(
+          <PaginationItem
+            number={number}
+            currentPage={currentPage}
+            warehouseName={warehouseName}
+            router={router}
+          />,
+        );
       }
 
       items.push(
@@ -72,7 +105,14 @@ const Paginator: React.FC<PaginatorProps> = ({
         />,
       );
 
-      items.push(<PaginationItem number={totalPages} />);
+      items.push(
+        <PaginationItem
+          number={totalPages}
+          currentPage={currentPage}
+          warehouseName={warehouseName}
+          router={router}
+        />,
+      );
     } else if (currentPage > totalPages - config.maxShowPages + 1) {
       items.push(
         <Pagination.Ellipsis
@@ -89,7 +129,14 @@ const Paginator: React.FC<PaginatorProps> = ({
         number <= totalPages;
         number++
       ) {
-        items.push(<PaginationItem number={number} />);
+        items.push(
+          <PaginationItem
+            number={number}
+            currentPage={currentPage}
+            warehouseName={warehouseName}
+            router={router}
+          />,
+        );
       }
     } else {
       items.push(
@@ -104,7 +151,14 @@ const Paginator: React.FC<PaginatorProps> = ({
         number <= currentPage + config.showEitherSideOfCurrent;
         number++
       ) {
-        items.push(<PaginationItem number={number} />);
+        items.push(
+          <PaginationItem
+            number={number}
+            currentPage={currentPage}
+            warehouseName={warehouseName}
+            router={router}
+          />,
+        );
       }
 
       items.push(
@@ -114,7 +168,14 @@ const Paginator: React.FC<PaginatorProps> = ({
         />,
       );
 
-      items.push(<PaginationItem number={totalPages} />);
+      items.push(
+        <PaginationItem
+          number={totalPages}
+          currentPage={currentPage}
+          warehouseName={warehouseName}
+          router={router}
+        />,
+      );
     }
   }
 
