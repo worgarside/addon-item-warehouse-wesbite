@@ -105,7 +105,7 @@ const Sidebar: React.FC<{
           </Col>
         </Row>
       </Container>
-      
+
       <ListGroup className={`list-group-flush mb-auto`}>
         {warehouses.map((warehouse: Warehouse) => (
           <ListGroup.Item

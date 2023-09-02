@@ -22,7 +22,7 @@ const Setting: React.FC<{
   name: string;
   initialValue: boolean;
   description: string;
-  callback?: (value: boolean) => void;
+  callback?: () => void;
 }> = ({ name, initialValue, description, callback }) => {
   const slug = name
     .toLowerCase()
@@ -53,7 +53,7 @@ const Setting: React.FC<{
   );
 };
 
-const SettingsPanel: React.FC = ({}) => {
+const SettingsPanel: React.FC = () => {
   const { darkMode, toggleDarkMode } = useSettings();
   const { showTooltip, toggleShowTooltip } = useSettings();
 
