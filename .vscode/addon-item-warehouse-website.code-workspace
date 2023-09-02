@@ -36,6 +36,10 @@
     "folders": [
         {
             "path": ".."
+        },
+        {
+            "name": "SSH FS - /addons",
+            "uri": "ssh://hasspi-config/addons"
         }
     ]
 }
