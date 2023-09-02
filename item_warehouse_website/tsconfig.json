@@ -24,9 +24,15 @@
     ],
     "baseUrl": "app/",
     "paths": {
-      "@/components/*": ["components/*"],
-      "@/services/*": ["services/*"],
-      "@/styles/*": ["styles/*"],
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/services/*": [
+        "services/*"
+      ],
+      "@/styles/*": [
+        "styles/*"
+      ],
     },
     "forceConsistentCasingInFileNames": true
   },

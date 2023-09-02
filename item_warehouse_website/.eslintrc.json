@@ -17,6 +17,14 @@
   "rules": {
     "prettier/prettier": "error"
   },
-  "overrides":[{
-  "files": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]}]
+  "overrides": [
+    {
+      "files": [
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.ts",
+        "**/*.tsx"
+      ]
+    }
+  ]
 }
