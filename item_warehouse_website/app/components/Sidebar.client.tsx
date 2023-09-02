@@ -10,6 +10,7 @@ import {
   mdiArrowCollapseLeft,
   mdiArrowCollapseRight,
 } from "@mdi/js";
+import { Poppins } from "next/font/google";
 import {
   Button,
   Col,
@@ -23,6 +24,8 @@ import {
 import { useRouter } from "next/navigation";
 import SettingsModal from "./SettingsModal.client";
 import { useSettings } from "./SettingsContext.client";
+
+const poppins = Poppins({ subsets: ["latin"], weight: "300" });
 
 interface Warehouse {
   name: string;
@@ -52,7 +55,11 @@ const Sidebar: React.FC<{
       TooltipProps &
       React.RefAttributes<HTMLDivElement>,
   ) => (
-    <Tooltip id="api-docs-tooltip" className={styles.tooltip} {...props}>
+    <Tooltip
+      id="api-docs-tooltip"
+      className={`${styles.tooltip} ${styles.tooltipApiDocs} ${poppins.className}`}
+      {...props}
+    >
       <Link
         className={styles.tooltipLink}
         target="_blank"
@@ -98,6 +105,7 @@ const Sidebar: React.FC<{
           </Col>
         </Row>
       </Container>
+      
       <ListGroup className={`list-group-flush mb-auto`}>
         {warehouses.map((warehouse: Warehouse) => (
           <ListGroup.Item
@@ -111,13 +119,34 @@ const Sidebar: React.FC<{
               router.refresh();
             }}
           >
-            <Col xs="auto">
-              <Icon
-                className={`flex-shrink-0 ${styles.warehouseIcon}`}
-                path={mdiWarehouse}
-                size={1}
-              />
-            </Col>
+            <OverlayTrigger
+              placement="right"
+              delay={{ show: 0, hide: 0 }}
+              overlay={
+                isCollapsed ? (
+                  <Tooltip
+                    id={`tooltip-${warehouse.name}`}
+                    className={`ms-2 ${styles.tooltip} ${styles.tooltipWarehouseName}`}
+                  >
+                    <span
+                      className={`${styles.tooltipLink} ${poppins.className}`}
+                    >
+                      {warehouse.name}
+                    </span>
+                  </Tooltip>
+                ) : (
+                  <></>
+                )
+              }
+            >
+              <Col xs="auto">
+                <Icon
+                  className={`flex-shrink-0 ${styles.warehouseIcon}`}
+                  path={mdiWarehouse}
+                  size={1}
+                />
+              </Col>
+            </OverlayTrigger>
             <Col
               className={`ps-2 ${styles.warehouseItemNameCol} ${
                 isCollapsed ? styles.collapsed : null

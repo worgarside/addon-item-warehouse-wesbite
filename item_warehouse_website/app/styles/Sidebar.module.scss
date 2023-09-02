@@ -27,7 +27,10 @@
 
 .warehouseIcon {
   transition: padding 0.3s ease;
+}
 
+.tooltip {
+  opacity: 1 !important;
 }
 
 .tooltip [class$="inner"] {
@@ -35,7 +38,7 @@
   border: 1px solid $pink-300 !important;
 }
 
-.tooltip [class$="arrow"]::before {
+.tooltipApiDocs [class$="arrow"]::before {
   border-bottom: 5px solid $pink-300 !important;
 }
 
@@ -43,6 +46,10 @@
   font-size: 1em;
   color: $white;
   text-decoration: none;
+}
+
+.tooltipWarehouseName [class$="arrow"]::before {
+  border-right: 5px solid $pink-300 !important;
 }
 
 .sidebar {
@@ -85,12 +92,28 @@
     border: 1px solid $blue-800 !important;
   }
 
-  .tooltip [class$="arrow"]::before {
+  .tooltipApiDocs [class$="arrow"]::before {
     border-bottom: 5px solid $blue-800 !important;
   }
 
+  .tooltipWarehouseName [class$="arrow"]::before {
+    border-right: 5px solid $blue-800 !important;
+  }
+
   .tooltipLink {
-    color: $gray-500 !important;
+    color: $gray-200 !important;
+  }
+
+  .collapseButton {
+    background-color: $blue-800 !important;
+    border-color: $blue-800 !important;
+    transition: background-color 0.3s ease, border-color 0.3s ease !important;
+
+    &.collapsed {
+      transition: background-color 0.3s ease, border-color 0.3s ease !important;
+      background-color: $blue-900 !important;
+      border-color: $blue-900 !important;
+    }
   }
 
 }
