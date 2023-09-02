@@ -1,6 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import Cookie from "js-cookie";
 interface SettingsContextProps {
   darkMode: boolean;
@@ -26,7 +33,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     Cookie.get("darkMode") === "1" || false,
   );
 
-  const toggleDarkMode = () => setDarkMode(!darkMode);
+  const toggleDarkMode = useCallback(() => setDarkMode(!darkMode), [darkMode]);
 
   useEffect(() => {
     Cookie.set("darkMode", darkMode ? "1" : "0");
@@ -40,7 +47,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     Cookie.get("showTooltip") === "1" || false,
   );
 
-  const toggleShowTooltip = () => setShowTooltip(!showTooltip);
+  const toggleShowTooltip = useCallback(
+    () => setShowTooltip(!showTooltip),
+    [showTooltip],
+  );
 
   useEffect(() => {
     Cookie.set("showTooltip", showTooltip ? "1" : "0");
@@ -54,10 +64,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setShowTooltip(initialShowTooltip);
   }, []);
 
+  const value = useMemo(
+    () => ({ darkMode, showTooltip, toggleDarkMode, toggleShowTooltip }),
+    [darkMode, showTooltip, toggleDarkMode, toggleShowTooltip],
+  );
+
   return (
-    <SettingsContext.Provider
-      value={{ darkMode, showTooltip, toggleDarkMode, toggleShowTooltip }}
-    >
+    <SettingsContext.Provider value={value}>
       {children}
     </SettingsContext.Provider>
   );
