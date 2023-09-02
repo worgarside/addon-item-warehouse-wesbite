@@ -5,10 +5,10 @@
 
 .warehouseItem {
   cursor: pointer;
-    transition: padding-left 0.3s ease, margin 0.3s ease;
+  transition: padding-left 0.3s ease, margin 0.3s ease;
 
   &.collapsed {
-    padding-left: 8px; 
+    padding-left: 8px;
   }
 }
 
@@ -19,7 +19,7 @@
 
   &.collapsed {
     transition: opacity 0.15s ease, visibility 0.15s ease;
-    opacity:    0;
+    opacity: 0;
     visibility: hidden;
   }
 
@@ -35,7 +35,7 @@
   border: 1px solid $pink-300 !important;
 }
 
-.tooltip [class$="arrow"]::before  {
+.tooltip [class$="arrow"]::before {
   border-bottom: 5px solid $pink-300 !important;
 }
 
@@ -51,11 +51,11 @@
   transition: width 0.3s ease;
 
   &.collapsed {
-    width: 40px !important; 
+    width: 40px !important;
   }
 }
 
-.collapseButton { 
+.collapseButton {
   border-radius: 0 !important;
   height: 100%;
   width: 2em;
@@ -64,7 +64,7 @@
   border-color: $pink-200 !important;
 
   &.collapsed {
-    width: 40px !important;  
+    width: 40px !important;
     transition: width 0.3s ease;
   }
 }
@@ -85,12 +85,12 @@
     border: 1px solid $blue-800 !important;
   }
 
-  .tooltip [class$="arrow"]::before  {
+  .tooltip [class$="arrow"]::before {
     border-bottom: 5px solid $blue-800 !important;
   }
 
   .tooltipLink {
-  color: $gray-500 !important;
-}
+    color: $gray-500 !important;
+  }
 
 }

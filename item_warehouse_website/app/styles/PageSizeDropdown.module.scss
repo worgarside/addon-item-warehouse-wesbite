@@ -19,9 +19,9 @@
     width: inherit;
 
     &:hover {
-    color: $white !important;
-    background-color: $pink-200 !important;
-      }
+        color: $white !important;
+        background-color: $pink-200 !important;
+    }
 }
 
 .dropdownItemActive {
@@ -40,15 +40,17 @@
         background-color: $blue-800 !important;
         border-color: $blue-600 !important;
     }
-    
-    .dropdownItem{ &:hover {
+
+    .dropdownItem {
+        &:hover {
             background-color: $blue-800 !important;
-          }}
-    
+        }
+    }
+
     .dropdownItemActive {
         background-color: $blue-800 !important;
     }
-    
+
     .dropdownMenu {
         background-color: $blue-900 !important;
     }
