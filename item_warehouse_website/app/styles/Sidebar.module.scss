@@ -1,0 +1,119 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+
+.warehouseItem {
+  cursor: pointer;
+  transition: padding-left 0.3s ease, margin 0.3s ease;
+
+  &.collapsed {
+    padding-left: 8px;
+  }
+}
+
+.warehouseItemNameCol {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+
+  &.collapsed {
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+}
+
+.warehouseIcon {
+  transition: padding 0.3s ease;
+}
+
+.tooltip {
+  opacity: 1 !important;
+}
+
+.tooltip [class$="inner"] {
+  background-color: $pink-300 !important;
+  border: 1px solid $pink-300 !important;
+}
+
+.tooltipApiDocs [class$="arrow"]::before {
+  border-bottom: 5px solid $pink-300 !important;
+}
+
+.tooltipLink {
+  font-size: 1em;
+  color: $white;
+  text-decoration: none;
+}
+
+.tooltipWarehouseName [class$="arrow"]::before {
+  border-right: 5px solid $pink-300 !important;
+}
+
+.sidebar {
+  background-color: $body-secondary-bg;
+  width: 230px;
+  transition: width 0.3s ease;
+
+  &.collapsed {
+    width: 40px !important;
+  }
+}
+
+.collapseButton {
+  border-radius: 0 !important;
+  height: 100%;
+  width: 2em;
+  transition: width 0.3s ease !important;
+  background-color: $pink-200 !important;
+  border-color: $pink-200 !important;
+
+  &.collapsed {
+    width: 40px !important;
+    transition: width 0.3s ease;
+  }
+}
+
+.collapseIcon {
+  &.collapsed {
+    margin-right: 3px !important;
+  }
+}
+
+@include color-mode(dark) {
+  .sidebar {
+    background-color: #151b20;
+  }
+
+  .tooltip [class$="inner"] {
+    background-color: $blue-800 !important;
+    border: 1px solid $blue-800 !important;
+  }
+
+  .tooltipApiDocs [class$="arrow"]::before {
+    border-bottom: 5px solid $blue-800 !important;
+  }
+
+  .tooltipWarehouseName [class$="arrow"]::before {
+    border-right: 5px solid $blue-800 !important;
+  }
+
+  .tooltipLink {
+    color: $gray-200 !important;
+  }
+
+  .collapseButton {
+    background-color: $blue-800 !important;
+    border-color: $blue-800 !important;
+    transition: background-color 0.3s ease, border-color 0.3s ease !important;
+
+    &.collapsed {
+      transition: background-color 0.3s ease, border-color 0.3s ease !important;
+      background-color: $blue-900 !important;
+      border-color: $blue-900 !important;
+    }
+  }
+
+}

@@ -1,8 +1,9 @@
+---
 name: ESLint
 
 on:
   push:
-    branches: 
+    branches:
       - develop
       - main
   pull_request:
@@ -23,10 +24,10 @@ jobs:
         with:
           cache: npm
           cache-dependency-path: item_warehouse_website/package-lock.json
-          node-version: "18"
+          node-version: '18'
 
       - name: Install Dependencies
-        run: cd item_warehouse_website && npm install
+        run: cd item_warehouse_website && npm ci
 
       - name: Run ESLint
         run: cd item_warehouse_website && npm run lint
