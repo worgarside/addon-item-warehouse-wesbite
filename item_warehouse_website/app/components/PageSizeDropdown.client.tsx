@@ -1,10 +1,9 @@
 "use client";
 
-import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
 import Cookie from "js-cookie";
 import { useRouter, useSearchParams } from "next/navigation";
+import styles from "../styles/PageSizeDropdown.module.scss";
 
 const hassioRefererPath: string = process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH
   ? "/" +
@@ -19,17 +18,13 @@ const PageSizeDropdown: React.FC<{
   const router = useRouter();
 
   const pageNumber = useSearchParams().get("page");
+  const pageSizes = [5, 10, 20, 30, 40, 50, 100];
 
   return (
     <>
       <div>
-        <DropdownButton
-          as={ButtonGroup}
-          id="page-size-dropdown"
-          className="ms-3"
-          size="sm"
-          variant="secondary"
-          title={`Page size: ${currentPageSize}`}
+        <Dropdown
+          className={styles.dropdown}
           onSelect={(eventKey: string | null) => {
             if (eventKey === null) {
               return;
@@ -43,17 +38,37 @@ const PageSizeDropdown: React.FC<{
             router.refresh();
           }}
         >
-          {process.env.NODE_ENV !== "production" ? (
-            <Dropdown.Item eventKey="1">1</Dropdown.Item>
-          ) : null}
-          <Dropdown.Item eventKey="5">5</Dropdown.Item>
-          <Dropdown.Item eventKey="10">10</Dropdown.Item>
-          <Dropdown.Item eventKey="20">20</Dropdown.Item>
-          <Dropdown.Item eventKey="30">30</Dropdown.Item>
-          <Dropdown.Item eventKey="40">40</Dropdown.Item>
-          <Dropdown.Item eventKey="50">50</Dropdown.Item>
-          <Dropdown.Item eventKey="100">100</Dropdown.Item>
-        </DropdownButton>
+          <Dropdown.Toggle
+            id="page-size-dropdown"
+            className={`cursor-pointer ${styles.dropdownToggle}`}
+            size="sm"
+            variant="secondary"
+          >
+            Page size: {currentPageSize}
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu className={styles.dropdownMenu}>
+            {process.env.NODE_ENV !== "production" ? (
+              <Dropdown.Item className={styles.dropdownItem} eventKey="1">
+                1
+              </Dropdown.Item>
+            ) : null}
+            {pageSizes.map((pageSize) => (
+              <Dropdown.Item
+                active={currentPageSize === pageSize.toString()}
+                className={`${styles.dropdownItem} ${
+                  currentPageSize === pageSize.toString()
+                    ? styles.dropdownItemActive
+                    : null
+                }`}
+                eventKey={pageSize.toString()}
+                key={pageSize}
+              >
+                {pageSize}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
     </>
   );

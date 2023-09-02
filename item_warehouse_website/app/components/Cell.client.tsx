@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useEffect } from "react";
 
-import styles from "../styles/Cell.module.css";
+import styles from "../styles/Cell.module.scss";
 
 import FullContentModal from "./FullContentModal.client";
 
@@ -33,7 +33,7 @@ const Cell: React.FC<{
   }, [content_string]);
 
   return (
-    <td key={header} className={styles.cell}>
+    <td key={header} className="px-1 py-1">
       <div className={styles.cellInner} ref={cellRef}>
         {isOverflowing ? (
           <>

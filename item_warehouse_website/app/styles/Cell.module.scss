@@ -1,6 +1,6 @@
-td.cell {
-  padding: 0.05em 0.4em;
-}
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
 
 .cellInner {
   position: relative;
@@ -14,5 +14,5 @@ td.cell {
 }
 
 .code {
-  color: var(--bs-dark);
+  color: unset;
 }

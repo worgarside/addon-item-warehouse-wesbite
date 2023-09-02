@@ -10,7 +10,7 @@ import {
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
-import styles from "../styles/FullContentModal.module.css";
+import styles from "../styles/FullContentModal.module.scss";
 
 import { Button, Modal } from "react-bootstrap";
 
@@ -58,7 +58,7 @@ const FullContentModal: React.FC<ModalProps> = ({ header, content }) => {
           <Modal.Title>
             <code>{header}</code>
           </Modal.Title>
-          <div className={styles.spacer}></div>
+          <div className="flex-grow-1"></div>
           <Button onClick={copyToClipboard} className={styles.button}>
             <Icon
               path={isCopied ? mdiClipboardCheckOutline : mdiClipboardOutline}
