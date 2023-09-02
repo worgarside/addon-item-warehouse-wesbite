@@ -1,5 +1,4 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./styles/globals.scss";
 import { apiBaseUrl, getWarehouses } from "services/api";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";

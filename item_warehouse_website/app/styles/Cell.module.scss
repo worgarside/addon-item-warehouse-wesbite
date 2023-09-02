@@ -4,10 +4,6 @@
 @import "~bootstrap/scss/mixins";
 
 
-td.cell {
-  padding: $spacer * 0.05 $spacer * 0.4;
-}
-
 .cellInner {
   position: relative;
   max-width: 50ch;

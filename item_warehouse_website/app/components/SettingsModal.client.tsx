@@ -2,10 +2,12 @@
 
 import React, { useState } from "react";
 import styles from "../styles/SettingsModal.module.scss";
+import sidebarStyles from "../styles/Sidebar.module.scss";
 import Icon from "@mdi/react";
 import { mdiClose, mdiTune } from "@mdi/js";
 import {
   Button,
+  Col,
   Container,
   Form,
   ListGroup,
@@ -73,7 +75,7 @@ const SettingsPanel: React.FC = ({}) => {
   );
 };
 
-const SettingsModal: React.FC = ({}) => {
+const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
   const [show, setShow] = useState(false);
 
   const handleClose = () => {
@@ -89,13 +91,29 @@ const SettingsModal: React.FC = ({}) => {
         <ListGroup.Item
           key="settings"
           active={false}
-          className="list-group-item list-group-item-action"
+          className={`d-flex flex-nowrap list-group-item list-group-item-action ${
+            isCollapsed ? sidebarStyles.collapsed : null
+          } ${sidebarStyles.warehouseItem}`}
           onClick={handleShow}
         >
-          <Icon className="me-2" path={mdiTune} size={1} />
-          Settings
+          <Col xs="auto">
+            <Icon
+              className={`flex-shrink-0 ${sidebarStyles.warehouseIcon}`}
+              path={mdiTune}
+              size={1}
+            />
+          </Col>
+
+          <Col
+            className={`ps-2 ${sidebarStyles.warehouseItemNameCol} ${
+              isCollapsed ? sidebarStyles.collapsed : null
+            }`}
+          >
+            Settings
+          </Col>
         </ListGroup.Item>
       </ListGroup>
+
       <Modal show={show} onHide={handleClose} centered size="xl">
         <Modal.Header>
           <Modal.Title>

@@ -12,13 +12,14 @@
   font-size: 0.8em;
 }
 
-button.button {
+.button {
   padding: 0 !important;
   margin: 0.5em $spacer * 0.25;
   width: $spacer * 2;
   height: 1.9em;
-  background-color: $body-tertiary-color;
-  border: none;
+  background-color: $body-tertiary-color !important;
+  border-width: 0  !important;
+  border-style: none  !important;
 }
 
 .icon {
