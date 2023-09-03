@@ -33,7 +33,10 @@ const WarehousePage: React.FC<{
     );
   }
 
-  const fields = Object.keys(warehouse.item_schema);
+  const fields =
+    item_page.fields.length === 0
+      ? Object.keys(warehouse.item_schema)
+      : item_page.fields;
 
   return (
     <>

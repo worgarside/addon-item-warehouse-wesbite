@@ -5,6 +5,7 @@ interface ItemsResponse {
   page: number;
   total: number;
   items: Record<string, ItemValue>[];
+  fields: string[];
 }
 
 enum FieldDisplayType {
@@ -53,7 +54,7 @@ const getItemsFromWarehouse = async (
   const res = await fetch(
     `${apiBaseUrl}/v1/warehouses/${warehouseName}/items?page_size=${count}&page=${
       pageNumber || 1
-    }`,
+    }&include_fields=true`,
   );
 
   if (!res.ok) {
