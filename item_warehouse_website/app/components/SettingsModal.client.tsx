@@ -25,12 +25,48 @@ import {
   setDisplayType,
 } from "../services/api";
 
-const ToggleSetting: React.FC<{
+interface ToggleSettingProps {
   name: string;
   initialValue: boolean;
   description: string;
   callback?: () => void;
-}> = ({ name, initialValue, description, callback }) => {
+}
+
+interface WarehouseTypeSettingProps {
+  name: string;
+  fieldDefinition: WarehouseSchemaProperty;
+  warehouseName: string;
+  setDisplayAsOption: (
+    warehouseName: string,
+    fieldName: string,
+    displayAs: FieldDisplayType,
+  ) => void;
+  warehouseRefreshCount: number;
+}
+
+interface WarehousePanelProps {
+  warehouse: WarehouseType;
+  warehouseRefreshCount: number;
+  setDisplayAsOption: (
+    warehouseName: string,
+    fieldName: string,
+    displayAs: FieldDisplayType,
+  ) => void;
+}
+
+interface SettingsPanelProps {
+  darkMode: boolean;
+  toggleDarkMode: () => void;
+  showTooltip: boolean;
+  toggleShowTooltip: () => void;
+}
+
+const ToggleSetting: React.FC<ToggleSettingProps> = ({
+  name,
+  initialValue,
+  description,
+  callback,
+}) => {
   const slug = name
     .toLowerCase()
     .replace(/\s+/g, "-")
@@ -60,31 +96,26 @@ const ToggleSetting: React.FC<{
   );
 };
 
-const WarehouseTypeSetting: React.FC<{
-  name: string;
-  fieldDefinition: WarehouseSchemaProperty;
-  warehouseName: string;
-  refreshWarehouses: () => void;
-  warehouseRefreshCount: number;
-}> = ({
+const WarehouseTypeSetting: React.FC<WarehouseTypeSettingProps> = ({
   name,
   fieldDefinition,
   warehouseName,
-  refreshWarehouses,
+  setDisplayAsOption,
   warehouseRefreshCount,
 }) => {
   const handleReset = () => {
     (async () => {
-      await resetDisplayType(name, warehouseName);
-      refreshWarehouses();
+      const resetDisplayOption = await resetDisplayType(name, warehouseName);
+      setDisplayAsOption(warehouseName, name, resetDisplayOption);
     })().catch((error) => console.error("Ah, bugger:", error));
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const displayType = event.target.value as unknown as FieldDisplayType;
+    setDisplayAsOption(warehouseName, name, displayType);
+
     (async () => {
       await setDisplayType(name, warehouseName, displayType);
-      refreshWarehouses();
     })().catch((error) => console.error("Ah, bugger:", error));
   };
 
@@ -121,11 +152,11 @@ const WarehouseTypeSetting: React.FC<{
   );
 };
 
-const WarehousePanel: React.FC<{
-  warehouse: WarehouseType;
-  warehouseRefreshCount: number;
-  refreshWarehouses: () => void;
-}> = ({ warehouse, warehouseRefreshCount, refreshWarehouses }) => {
+const WarehousePanel: React.FC<WarehousePanelProps> = ({
+  warehouse,
+  warehouseRefreshCount,
+  setDisplayAsOption,
+}) => {
   const sortedEntries = Object.entries(warehouse.item_schema).sort((a, b) =>
     a[0].localeCompare(b[0]),
   );
@@ -135,7 +166,7 @@ const WarehousePanel: React.FC<{
       {sortedEntries.map(([field, fieldDefinition]) => (
         <WarehouseTypeSetting
           warehouseRefreshCount={warehouseRefreshCount}
-          refreshWarehouses={refreshWarehouses}
+          setDisplayAsOption={setDisplayAsOption}
           key={`${warehouse.name}-${field}-${warehouseRefreshCount}`}
           name={field}
           fieldDefinition={fieldDefinition}
@@ -146,12 +177,12 @@ const WarehousePanel: React.FC<{
   );
 };
 
-const SettingsPanel: React.FC<{
-  darkMode: boolean;
-  toggleDarkMode: () => void;
-  showTooltip: boolean;
-  toggleShowTooltip: () => void;
-}> = ({ darkMode, toggleDarkMode, showTooltip, toggleShowTooltip }) => {
+const SettingsPanel: React.FC<SettingsPanelProps> = ({
+  darkMode,
+  toggleDarkMode,
+  showTooltip,
+  toggleShowTooltip,
+}) => {
   return (
     <Container>
       <ToggleSetting
@@ -179,7 +210,7 @@ const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
     toggleDarkMode,
     showTooltip,
     toggleShowTooltip,
-    refreshWarehouses,
+    setDisplayAsOption,
   } = useSettings();
 
   const handleClose = () => {
@@ -263,7 +294,7 @@ const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
                   <WarehousePanel
                     warehouse={warehouse}
                     warehouseRefreshCount={warehouseRefreshCount}
-                    refreshWarehouses={refreshWarehouses}
+                    setDisplayAsOption={setDisplayAsOption}
                   />
                 </Tab.Pane>
               ))}

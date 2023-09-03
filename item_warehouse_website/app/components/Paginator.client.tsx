@@ -35,7 +35,6 @@ const PaginationItem: React.FC<PaginationItemProps> = ({
     linkClassName={`${styles.paginatorItemLink} ${
       number === currentPage ? styles.paginatorItemLinkActive : ""
     }`}
-    key={number}
     active={number === currentPage}
     onClick={() => {
       router.push(
@@ -65,6 +64,7 @@ const Paginator: React.FC<PaginatorProps> = ({
     for (let number = 1; number <= totalPages; number++) {
       items.push(
         <PaginationItem
+          key={number}
           number={number}
           currentPage={currentPage}
           warehouseName={warehouseName}
@@ -75,6 +75,7 @@ const Paginator: React.FC<PaginatorProps> = ({
   } else {
     items.push(
       <PaginationItem
+        key={1}
         number={1}
         currentPage={currentPage}
         warehouseName={warehouseName}
@@ -90,6 +91,7 @@ const Paginator: React.FC<PaginatorProps> = ({
       ) {
         items.push(
           <PaginationItem
+            key={number}
             number={number}
             currentPage={currentPage}
             warehouseName={warehouseName}
@@ -107,6 +109,7 @@ const Paginator: React.FC<PaginatorProps> = ({
 
       items.push(
         <PaginationItem
+          key={totalPages}
           number={totalPages}
           currentPage={currentPage}
           warehouseName={warehouseName}
@@ -131,6 +134,7 @@ const Paginator: React.FC<PaginatorProps> = ({
       ) {
         items.push(
           <PaginationItem
+            key={number}
             number={number}
             currentPage={currentPage}
             warehouseName={warehouseName}
@@ -153,6 +157,7 @@ const Paginator: React.FC<PaginatorProps> = ({
       ) {
         items.push(
           <PaginationItem
+            key={number}
             number={number}
             currentPage={currentPage}
             warehouseName={warehouseName}
@@ -170,6 +175,7 @@ const Paginator: React.FC<PaginatorProps> = ({
 
       items.push(
         <PaginationItem
+          key={totalPages}
           number={totalPages}
           currentPage={currentPage}
           warehouseName={warehouseName}

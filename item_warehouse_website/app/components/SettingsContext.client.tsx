@@ -9,7 +9,12 @@ import React, {
   useState,
 } from "react";
 import Cookie from "js-cookie";
-import { WarehouseType, getWarehouses } from "../services/api";
+import {
+  FieldDisplayType,
+  WarehouseType,
+  getWarehouses,
+} from "../services/api";
+import _ from "lodash";
 
 interface SettingsContextProps {
   darkMode: boolean;
@@ -20,6 +25,15 @@ interface SettingsContextProps {
   setWarehouses: (warehouses: WarehouseType[]) => void;
   refreshWarehouses: () => void;
   warehouseRefreshCount: number;
+  setDisplayAsOption: (
+    warehouseName: string,
+    fieldName: string,
+    displayAs: FieldDisplayType,
+  ) => void;
+  setWarehouseRefreshCount: (count: number) => void;
+  getDisplayAsOptions: (
+    warehouseName: string,
+  ) => Record<string, FieldDisplayType>;
 }
 
 const SettingsContext = createContext<SettingsContextProps | undefined>(
@@ -35,6 +49,8 @@ export const useSettings = () => {
 };
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
+  // *** Dark Mode *** //
+
   const [darkMode, setDarkMode] = useState<boolean>(
     Cookie.get("darkMode") === "1" || false,
   );
@@ -49,6 +65,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     );
   }, [darkMode]);
 
+  // *** API Documentation Tooltip *** //
+
   const [showTooltip, setShowTooltip] = useState<boolean>(
     Cookie.get("showTooltip") === "1" || false,
   );
@@ -62,8 +80,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     Cookie.set("showTooltip", showTooltip ? "1" : "0");
   }, [showTooltip]);
 
-  const [warehouses, setWarehouses] = useState<WarehouseType[]>([]);
+  // *** Warehouses *** //
 
+  const [warehouses, setWarehouses] = useState<WarehouseType[]>([]);
   const [warehouseRefreshCount, setWarehouseRefreshCount] = useState(0);
 
   const refreshWarehouses = useCallback(async () => {
@@ -71,6 +90,55 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setWarehouses(freshWarehouses);
     setWarehouseRefreshCount(warehouseRefreshCount + 1);
   }, [warehouseRefreshCount]);
+
+  // *** Display As Options *** //
+
+  const setDisplayAsOption = useCallback(
+    (warehouseName: string, fieldName: string, displayAs: FieldDisplayType) => {
+      const updatedWarehouses: WarehouseType[] = _.cloneDeep(warehouses);
+      const warehouse = updatedWarehouses.find(
+        (warehouse) => warehouse.name === warehouseName,
+      );
+
+      if (!warehouse) {
+        return;
+      }
+
+      warehouse.item_schema[fieldName].display_as = displayAs;
+      setWarehouses(updatedWarehouses);
+      setWarehouseRefreshCount(warehouseRefreshCount + 1);
+    },
+    [warehouseRefreshCount, warehouses],
+  );
+
+  const getDisplayAsOptions = useCallback(
+    (warehouseName: string) => {
+      const displayAsOptions: Record<string, FieldDisplayType> = {};
+
+      if (warehouses.length === 0) {
+        return displayAsOptions;
+      }
+
+      const warehouse = warehouses.find(
+        (warehouse) => warehouse.name === warehouseName,
+      );
+
+      if (!warehouse) {
+        return displayAsOptions;
+      }
+
+      Object.entries(warehouse.item_schema).forEach(
+        ([fieldName, fieldDefinition]) => {
+          displayAsOptions[fieldName] = fieldDefinition.display_as;
+        },
+      );
+
+      return displayAsOptions;
+    },
+    [warehouses],
+  );
+
+  // *** Initialisation *** //
 
   useEffect(() => {
     const initialDarkMode = Cookie.get("darkMode") === "1";
@@ -89,6 +157,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // *** Values Export *** //
+
   const value = useMemo(
     () => ({
       darkMode,
@@ -99,6 +169,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setWarehouses,
       refreshWarehouses,
       warehouseRefreshCount,
+      setDisplayAsOption,
+      setWarehouseRefreshCount,
+      getDisplayAsOptions,
     }),
     [
       darkMode,
@@ -108,6 +181,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       warehouses,
       refreshWarehouses,
       warehouseRefreshCount,
+      setDisplayAsOption,
+      getDisplayAsOptions,
     ],
   );
 

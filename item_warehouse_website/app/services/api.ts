@@ -91,15 +91,15 @@ const getWarehouses = async (): Promise<Warehouse[]> => {
 const resetDisplayType = async (
   fieldName: string,
   warehouseName: string,
-): Promise<void> => {
-  await setDisplayType(fieldName, warehouseName, "reset");
+): Promise<FieldDisplayType> => {
+  return await setDisplayType(fieldName, warehouseName, "reset");
 };
 
 const setDisplayType = async (
   fieldName: string,
   warehouseName: string,
   displayType: FieldDisplayType | "reset",
-): Promise<void> => {
+): Promise<FieldDisplayType> => {
   const res = await fetch(
     `${apiBaseUrl}/v1/warehouses/${warehouseName}/schema/${fieldName}`,
     {
@@ -116,6 +116,14 @@ const setDisplayType = async (
   if (!res.ok) {
     throw new Error("Failed to fetch data");
   }
+
+  if (displayType === "reset") {
+    const data = (await res.json()) as Record<string, WarehouseSchemaProperty>;
+
+    return data[fieldName].display_as;
+  }
+
+  return displayType;
 };
 
 export {

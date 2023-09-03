@@ -4,12 +4,12 @@
 
 .cellInner {
   position: relative;
+  overflow-y: auto;
   max-width: 50ch;
   max-height: 4em;
 }
 
 .scrollable {
-  overflow-y: auto;
   height: 4em;
 }
 
