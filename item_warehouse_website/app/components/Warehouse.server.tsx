@@ -12,7 +12,7 @@ const Warehouse: React.FC<{
     <>
       <div className={`p-0 m-0 mt-3 ${styles.container}`}>
         <table className={`table table-hover table-striped table-bordered`}>
-          <thead className="thead-dark">
+          <thead>
             <tr>
               {fields.map((header) => (
                 <th
