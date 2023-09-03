@@ -9,11 +9,17 @@ import React, {
   useState,
 } from "react";
 import Cookie from "js-cookie";
+import { WarehouseType, getWarehouses } from "../services/api";
+
 interface SettingsContextProps {
   darkMode: boolean;
   toggleDarkMode: () => void;
   showTooltip: boolean;
   toggleShowTooltip: () => void;
+  warehouses: WarehouseType[];
+  setWarehouses: (warehouses: WarehouseType[]) => void;
+  refreshWarehouses: () => void;
+  warehouseRefreshCount: number;
 }
 
 const SettingsContext = createContext<SettingsContextProps | undefined>(
@@ -54,7 +60,17 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     Cookie.set("showTooltip", showTooltip ? "1" : "0");
-  });
+  }, [showTooltip]);
+
+  const [warehouses, setWarehouses] = useState<WarehouseType[]>([]);
+
+  const [warehouseRefreshCount, setWarehouseRefreshCount] = useState(0);
+
+  const refreshWarehouses = useCallback(async () => {
+    const freshWarehouses = await getWarehouses();
+    setWarehouses(freshWarehouses);
+    setWarehouseRefreshCount(warehouseRefreshCount + 1);
+  }, [warehouseRefreshCount]);
 
   useEffect(() => {
     const initialDarkMode = Cookie.get("darkMode") === "1";
@@ -64,9 +80,35 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setShowTooltip(initialShowTooltip);
   }, []);
 
+  useEffect(() => {
+    refreshWarehouses()
+      .then(() => {})
+      .catch((error) => {
+        console.error("Couldn't refresh warehouses:", error);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const value = useMemo(
-    () => ({ darkMode, showTooltip, toggleDarkMode, toggleShowTooltip }),
-    [darkMode, showTooltip, toggleDarkMode, toggleShowTooltip],
+    () => ({
+      darkMode,
+      showTooltip,
+      toggleDarkMode,
+      toggleShowTooltip,
+      warehouses,
+      setWarehouses,
+      refreshWarehouses,
+      warehouseRefreshCount,
+    }),
+    [
+      darkMode,
+      showTooltip,
+      toggleDarkMode,
+      toggleShowTooltip,
+      warehouses,
+      refreshWarehouses,
+      warehouseRefreshCount,
+    ],
   );
 
   return (

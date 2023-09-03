@@ -7,9 +7,19 @@ interface ItemsResponse {
   items: Record<string, ItemValue>[];
 }
 
+enum FieldDisplayType {
+  Text = "text",
+  Number = "number",
+  Date = "date",
+  DateTime = "datetime",
+  Boolean = "boolean",
+  Json = "json",
+}
+
 interface WarehouseSchemaProperty {
   autoincrement: string;
   default: string;
+  display_as: FieldDisplayType;
   index: boolean;
   key: string;
   nullable: number;
@@ -77,5 +87,47 @@ const getWarehouses = async (): Promise<Warehouse[]> => {
   return data.warehouses;
 };
 
-export { getItemsFromWarehouse, getWarehouse, getWarehouses, apiBaseUrl };
-export type { ItemsResponse, Warehouse as WarehouseType };
+const resetDisplayType = async (
+  fieldName: string,
+  warehouseName: string,
+): Promise<void> => {
+  await setDisplayType(fieldName, warehouseName, "reset");
+};
+
+const setDisplayType = async (
+  fieldName: string,
+  warehouseName: string,
+  displayType: FieldDisplayType | "reset",
+): Promise<void> => {
+  const res = await fetch(
+    `${apiBaseUrl}/v1/warehouses/${warehouseName}/schema/${fieldName}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        display_as: displayType,
+      }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
+};
+
+export {
+  getItemsFromWarehouse,
+  getWarehouse,
+  getWarehouses,
+  apiBaseUrl,
+  FieldDisplayType,
+  resetDisplayType,
+  setDisplayType,
+};
+export type {
+  ItemsResponse,
+  Warehouse as WarehouseType,
+  WarehouseSchemaProperty,
+};
