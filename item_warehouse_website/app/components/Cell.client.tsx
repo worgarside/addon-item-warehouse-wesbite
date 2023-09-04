@@ -7,13 +7,6 @@ import styles from "../styles/Cell.module.scss";
 import FullContentModal from "./FullContentModal.client";
 import { FieldDisplayType } from "../services/api";
 
-const epochToCustomFormat = (epoch: number): string => {
-  const d = new Date(epoch * 1000);
-  return `${d.toISOString().split("T")[1].split(".")[0]} ${
-    d.toISOString().split("T")[0]
-  }`;
-};
-
 interface CellProps {
   value: boolean | number | string | null;
   header: string;
@@ -21,14 +14,17 @@ interface CellProps {
   displayAsOption?: FieldDisplayType;
 }
 
+const cellHeightInPixels = 64;
+const cellWidthInPixels = 480;
+
 const Cell: React.FC<CellProps> = ({
   value,
   header,
   displayAsOption,
   type,
 }) => {
+  const codeRef = useRef<HTMLDivElement | null>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
-  const cellRef = useRef<HTMLDivElement | null>(null);
 
   const contentString = value === null ? "null" : String(value);
 
@@ -40,7 +36,7 @@ const Cell: React.FC<CellProps> = ({
         return content === "true" ? "✅" : "❌";
       } else if (displayAsOption === FieldDisplayType.DateTime) {
         if (type === "float") {
-          return epochToCustomFormat(Number(content));
+          return new Date(Number(content) * 1000).toISOString();
         }
       }
 
@@ -54,46 +50,33 @@ const Cell: React.FC<CellProps> = ({
   );
 
   useEffect(() => {
-    if (cellRef.current) {
-      const element = cellRef.current;
-      if (element.scrollHeight > element.clientHeight) {
-        setIsOverflowing(true);
-      } else {
-        setIsOverflowing(false);
-      }
+    if (codeRef.current) {
+      const { clientHeight, clientWidth } = codeRef.current;
+      const overflowCondition =
+        clientHeight > cellHeightInPixels || clientWidth > cellWidthInPixels;
+      console.log("Is it overflowing?", overflowCondition); // Debug line
+      setIsOverflowing(overflowCondition);
     }
-  }, [contentString]);
+  }, []);
 
   useEffect(() => {
     setFormattedContent(formatContent(contentString));
   }, [formatContent, contentString]);
 
   return (
-    <td className="px-1 py-1">
-      <div className={styles.cellInner} ref={cellRef} key={displayAsOption}>
-        {isOverflowing ? (
-          <>
-            <div className={styles.scrollable}>
-              <pre>
-                <code
-                  className={
-                    contentString == "null" ? "text-muted" : styles.code
-                  }
-                >
-                  {formattedContent}
-                </code>
-              </pre>
-            </div>
-            <FullContentModal content={formattedContent} header={header} />
-          </>
-        ) : (
-          <code
-            className={contentString == "null" ? "text-muted" : styles.code}
-          >
-            {formattedContent}
-          </code>
-        )}
+    <td className="position-relative p-0">
+      <div className={styles.cellOuter}>
+        <div className={styles.cellContent}>
+          <pre className={styles.preFullHeight}>
+            <code className="p-1" ref={codeRef}>
+              {formattedContent}
+            </code>
+          </pre>
+        </div>
       </div>
+      {isOverflowing && (
+        <FullContentModal content={formattedContent} header={header} />
+      )}
     </td>
   );
 };
