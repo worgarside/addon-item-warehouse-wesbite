@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect } from "react";
 
 import styles from "../styles/Cell.module.scss";
 
@@ -17,6 +17,42 @@ interface CellProps {
 const cellHeightInPixels = 64;
 const cellWidthInPixels = 480;
 
+const TimeSince: React.FC<{ dttm: Date | undefined }> = ({ dttm }) => {
+  if (!dttm) {
+    return null;
+  }
+
+  const now = new Date();
+  let secondsPast = (now.getTime() - dttm.getTime()) / 1000;
+  let value: number = secondsPast;
+  let unit: string = "";
+
+  const timeUnits = [
+    { unit: "second", factor: 60 },
+    { unit: "minute", factor: 60 },
+    { unit: "hour", factor: 24 },
+    { unit: "day", factor: 30.44 },
+    { unit: "month", factor: 12 },
+    { unit: "year", factor: Infinity },
+  ];
+
+  for (const { unit: u, factor } of timeUnits) {
+    if (secondsPast < factor || factor === Infinity) {
+      unit = u;
+      value = secondsPast;
+      break;
+    }
+    secondsPast /= factor;
+  }
+
+  const roundedValue = Math.round(value);
+  return (
+    <span className="text-muted">{`${roundedValue} ${unit}${
+      roundedValue > 1 ? "s" : ""
+    } ago`}</span>
+  );
+};
+
 const Cell: React.FC<CellProps> = ({
   value,
   header,
@@ -26,42 +62,36 @@ const Cell: React.FC<CellProps> = ({
   const codeRef = useRef<HTMLDivElement | null>(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
 
-  const contentString = value === null ? "null" : String(value);
+  let formattedContent: string;
+  const displayAsDateTime = displayAsOption === FieldDisplayType.DateTime;
 
-  const formatContent = useCallback(
-    (content: string) => {
-      if (displayAsOption === FieldDisplayType.Number) {
-        return Number(content).toLocaleString();
-      } else if (displayAsOption === FieldDisplayType.Boolean) {
-        return content === "true" ? "✅" : "❌";
-      } else if (displayAsOption === FieldDisplayType.DateTime) {
-        if (type === "float") {
-          return new Date(Number(content) * 1000).toISOString();
-        }
-      }
+  let dttm: Date | undefined = undefined;
 
-      return content;
-    },
-    [displayAsOption, type],
-  );
-
-  const [formattedContent, setFormattedContent] = useState<string>(
-    formatContent(contentString),
-  );
+  if (value === null) {
+    formattedContent = "null";
+  } else if (displayAsDateTime) {
+    dttm = new Date(Number(value) * 1000);
+    if (type === "float") {
+      formattedContent = dttm.toISOString();
+    } else {
+      formattedContent = String(value);
+    }
+  } else if (displayAsOption === FieldDisplayType.Number) {
+    formattedContent = Number(value).toLocaleString();
+  } else if (displayAsOption === FieldDisplayType.Boolean) {
+    formattedContent = value === "true" ? "✅" : "❌";
+  } else {
+    formattedContent = String(value);
+  }
 
   useEffect(() => {
     if (codeRef.current) {
       const { clientHeight, clientWidth } = codeRef.current;
       const overflowCondition =
         clientHeight > cellHeightInPixels || clientWidth > cellWidthInPixels;
-      console.log("Is it overflowing?", overflowCondition); // Debug line
       setIsOverflowing(overflowCondition);
     }
   }, []);
-
-  useEffect(() => {
-    setFormattedContent(formatContent(contentString));
-  }, [formatContent, contentString]);
 
   return (
     <td className="position-relative p-0">
@@ -70,6 +100,12 @@ const Cell: React.FC<CellProps> = ({
           <pre className={styles.preFullHeight}>
             <code className="p-1" ref={codeRef}>
               {formattedContent}
+              {displayAsDateTime && (
+                <>
+                  <br />
+                  <TimeSince dttm={dttm} />
+                </>
+              )}
             </code>
           </pre>
         </div>
