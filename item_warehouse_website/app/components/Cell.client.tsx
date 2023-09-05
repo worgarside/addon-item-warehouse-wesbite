@@ -17,12 +17,29 @@ interface CellProps {
 const cellHeightInPixels = 64;
 const cellWidthInPixels = 480;
 
-const TimeSince: React.FC<{ dttm: Date | undefined }> = ({ dttm }) => {
+const oneDay = 24 * 60 * 60 * 1000;
+
+const TimeSince: React.FC<{
+  displayAsOption: FieldDisplayType.Date | FieldDisplayType.DateTime;
+  dttm: Date | undefined;
+}> = ({ displayAsOption, dttm }) => {
   if (!dttm) {
     return null;
   }
 
   const now = new Date();
+
+  if (displayAsOption === FieldDisplayType.Date) {
+    const daysPast = Math.round(
+      Math.abs((now.getTime() - dttm.getTime()) / oneDay),
+    );
+    return (
+      <span className="text-muted">{`${daysPast} day${
+        daysPast != 1 ? "s" : ""
+      } ago`}</span>
+    );
+  }
+
   let secondsPast = (now.getTime() - dttm.getTime()) / 1000;
   let value: number = secondsPast;
   let unit: string = "";
@@ -48,7 +65,7 @@ const TimeSince: React.FC<{ dttm: Date | undefined }> = ({ dttm }) => {
   const roundedValue = Math.round(value);
   return (
     <span className="text-muted">{`${roundedValue} ${unit}${
-      roundedValue > 1 ? "s" : ""
+      roundedValue != 1 ? "s" : ""
     } ago`}</span>
   );
 };
@@ -63,23 +80,30 @@ const Cell: React.FC<CellProps> = ({
   const [isOverflowing, setIsOverflowing] = useState(false);
 
   let formattedContent: string;
-  const displayAsDateTime = displayAsOption === FieldDisplayType.DateTime;
+  const displayTimeSince =
+    displayAsOption === FieldDisplayType.Date ||
+    displayAsOption === FieldDisplayType.DateTime;
 
   let dttm: Date | undefined = undefined;
 
   if (value === null) {
     formattedContent = "null";
-  } else if (displayAsDateTime) {
+  } else if (displayTimeSince) {
     dttm = new Date(Number(value) * 1000);
-    if (type === "float") {
-      formattedContent = dttm.toISOString();
+
+    if (displayAsOption === FieldDisplayType.Date) {
+      formattedContent = dttm.toISOString().split("T")[0];
     } else {
-      formattedContent = String(value);
+      if (type === "float") {
+        formattedContent = dttm.toISOString();
+      } else {
+        formattedContent = String(value);
+      }
     }
   } else if (displayAsOption === FieldDisplayType.Number) {
     formattedContent = Number(value).toLocaleString();
   } else if (displayAsOption === FieldDisplayType.Boolean) {
-    formattedContent = value === "true" ? "✅" : "❌";
+    formattedContent = value ? "✅" : "❌";
   } else {
     formattedContent = String(value);
   }
@@ -100,10 +124,10 @@ const Cell: React.FC<CellProps> = ({
           <pre className={styles.preFullHeight}>
             <code className="p-1" ref={codeRef}>
               {formattedContent}
-              {displayAsDateTime && (
+              {displayTimeSince && (
                 <>
                   <br />
-                  <TimeSince dttm={dttm} />
+                  <TimeSince displayAsOption={displayAsOption} dttm={dttm} />
                 </>
               )}
             </code>
