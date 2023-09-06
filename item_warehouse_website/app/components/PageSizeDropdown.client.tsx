@@ -11,10 +11,15 @@ const hassioRefererPath: string = process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH
     "/"
   : "";
 
-const PageSizeDropdown: React.FC<{
+interface PageSizeDropdownProps {
   currentPageSize: string;
   warehouseName: string;
-}> = ({ currentPageSize, warehouseName }) => {
+}
+
+const PageSizeDropdown: React.FC<PageSizeDropdownProps> = ({
+  currentPageSize,
+  warehouseName,
+}) => {
   const router = useRouter();
 
   const pageNumber = useSearchParams().get("page");

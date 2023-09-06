@@ -17,7 +17,6 @@
   margin: 0.5em $spacer * 0.25;
   width: $spacer * 2;
   height: 1.9em;
-  background-color: $body-tertiary-color !important;
   border-width: 0 !important;
   border-style: none !important;
 }
@@ -29,4 +28,8 @@
 
 .modalBody {
   height: 75vh;
+}
+
+.displayTypeSelect {
+  max-width: 13ch;
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import Warehouse from "./Warehouse.server";
+import Warehouse from "./Warehouse.client";
 import {
   ItemsResponse,
   WarehouseType,
@@ -10,10 +10,15 @@ import { cookies } from "next/headers";
 
 import NavBar from "./Navbar.client";
 
-const WarehousePage: React.FC<{
+interface WarehousePageProps {
   warehouseName: string;
   page: string;
-}> = async ({ warehouseName, page }) => {
+}
+
+const WarehousePage: React.FC<WarehousePageProps> = async ({
+  warehouseName,
+  page,
+}) => {
   const pageSize = cookies().get("pageSize")?.value || "10";
 
   let item_page: ItemsResponse;
@@ -46,6 +51,7 @@ const WarehousePage: React.FC<{
         fields={fields}
         warehouseName={warehouseName}
         currentPage={item_page.page}
+        warehouseSchema={warehouse.item_schema}
       />
     </>
   );

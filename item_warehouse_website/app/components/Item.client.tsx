@@ -1,11 +1,17 @@
+"use client";
+
 import React from "react";
 import Cell from "./Cell.client";
+import { FieldDisplayType, WarehouseSchemaProperty } from "../services/api";
 
 interface ItemProps {
   item: Record<string, boolean | number | string | null>;
   index: number;
   currentPage: number;
   warehouseName: string;
+  warehouseSchema: Record<string, WarehouseSchemaProperty>;
+  warehouseRefreshCount: number;
+  warehouseDisplayOptions: Record<string, FieldDisplayType>;
 }
 
 const Item: React.FC<ItemProps> = ({
@@ -13,14 +19,22 @@ const Item: React.FC<ItemProps> = ({
   index,
   currentPage,
   warehouseName,
+  warehouseSchema,
+  warehouseRefreshCount,
+  warehouseDisplayOptions,
 }) => {
   return (
-    <tr key={index}>
-      {Object.entries(item).map(([key, value], cellIndex) => (
+    <tr>
+      {Object.entries(item).map(([header, value], cellIndex) => (
         <Cell
           value={value}
-          header={key}
-          key={`${warehouseName}-${currentPage}-${index}-${cellIndex}`}
+          header={header}
+          key={`${warehouseName}-${currentPage}-${index}-${cellIndex}-${warehouseRefreshCount}`}
+          displayAsOption={
+            warehouseDisplayOptions[header] ||
+            warehouseSchema[header].display_as
+          }
+          type={warehouseSchema[header].type}
         />
       ))}
     </tr>

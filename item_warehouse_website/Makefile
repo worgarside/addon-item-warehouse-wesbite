@@ -2,10 +2,11 @@ include .env
 export
 
 clean:
+	@$(MAKE) update-ip
 	find . \( -name "node_modules" -o -name "build" -o -name "dist" -o -name ".next" \) -type d -exec rm -rf {} +
 
 build:
-	$(MAKE) install
+	@$(MAKE) install
 	@npm ci
 	@npm run build
 
@@ -15,8 +16,13 @@ docker:
 install:
 	@npm install
 
+update-ip:
+	@new_ip=$$(ifconfig en0 | awk '/inet / {print $$2}') ; \
+	sed -i '' -e "s|NEXT_PUBLIC_API_BASE_URL=http://[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*:8002|NEXT_PUBLIC_API_BASE_URL=http://$$new_ip:8002|" .env
+
+
 website-local:
-	$(MAKE) install
+	@$(MAKE) install
 	@npm run dev
 
 # VSCode Shortcuts #

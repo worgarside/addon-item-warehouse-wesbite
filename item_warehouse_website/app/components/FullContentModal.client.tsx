@@ -47,12 +47,9 @@ const FullContentModal: React.FC<ModalProps> = ({ header, content }) => {
   return (
     <>
       <Button onClick={handleShow} className={styles.buttonShowModal}>
-        <Icon
-          path={mdiTextBoxPlus}
-          size={0.825}
-          className={styles.iconShowModal}
-        />
+        <Icon path={mdiTextBoxPlus} className={styles.iconShowModal} />
       </Button>
+
       <Modal show={show} onHide={handleClose} centered size="xl">
         <Modal.Header className={styles.modalHeader}>
           <Modal.Title>
@@ -63,11 +60,11 @@ const FullContentModal: React.FC<ModalProps> = ({ header, content }) => {
             <Icon
               path={isCopied ? mdiClipboardCheckOutline : mdiClipboardOutline}
               size={1}
-              className={styles.icon}
+              className={styles.iconModalHeader}
             />
           </Button>
           <Button onClick={handleClose} className={styles.button}>
-            <Icon path={mdiClose} size={1} className={styles.icon} />
+            <Icon path={mdiClose} size={1} className={styles.iconModalHeader} />
           </Button>
         </Modal.Header>
         <Modal.Body className={styles.modalBody}>
