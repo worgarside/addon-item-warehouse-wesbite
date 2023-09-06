@@ -15,18 +15,38 @@ interface WarehousePageProps {
   page: string;
 }
 
+export interface WarehouseFieldOrder {
+  ascending: boolean | null;
+  fieldName: string | null;
+}
+
 const WarehousePage: React.FC<WarehousePageProps> = async ({
   warehouseName,
   page,
 }) => {
   const pageSize = cookies().get("pageSize")?.value || "10";
 
+  const warehouseFieldOrderCookie = cookies().get(`${warehouseName}FieldOrder`);
+
+  const warehouseFieldOrder: WarehouseFieldOrder = warehouseFieldOrderCookie
+    ? (JSON.parse(warehouseFieldOrderCookie.value) as WarehouseFieldOrder)
+    : {
+        fieldName: null,
+        ascending: null,
+      };
+
   let item_page: ItemsResponse;
   let warehouse: WarehouseType;
 
   try {
     warehouse = await getWarehouse(warehouseName);
-    item_page = await getItemsFromWarehouse(warehouseName, pageSize, page);
+    item_page = await getItemsFromWarehouse(
+      warehouseName,
+      pageSize,
+      page,
+      warehouseFieldOrder.fieldName,
+      warehouseFieldOrder.ascending,
+    );
   } catch (error) {
     return (
       <div className="alert alert-warning" role="alert">
@@ -52,6 +72,7 @@ const WarehousePage: React.FC<WarehousePageProps> = async ({
         warehouseName={warehouseName}
         currentPage={item_page.page}
         warehouseSchema={warehouse.item_schema}
+        warehouseFieldOrder={warehouseFieldOrder}
       />
     </>
   );

@@ -15,6 +15,8 @@ import {
   getWarehouses,
 } from "../services/api";
 import _ from "lodash";
+import { WarehouseFieldOrder } from "./WarehousePage.server";
+import { useSearchParams } from "next/navigation";
 
 interface SettingsContextProps {
   darkMode: boolean;
@@ -34,6 +36,12 @@ interface SettingsContextProps {
   getDisplayAsOptions: (
     warehouseName: string,
   ) => Record<string, FieldDisplayType>;
+  currentWarehouseFieldOrder: WarehouseFieldOrder | null;
+  updateWarehouseFieldOrder: (
+    warehouseName: string,
+    fieldName: string | null,
+    ascending: boolean | null,
+  ) => void;
 }
 
 const SettingsContext = createContext<SettingsContextProps | undefined>(
@@ -46,6 +54,25 @@ export const useSettings = () => {
     throw new Error("useSettings must be used within SettingsProvider");
   }
   return context;
+};
+
+const getWarehouseFieldOrder = (warehouseName: string | null) => {
+  const defaultFieldOrder: WarehouseFieldOrder = {
+    fieldName: null,
+    ascending: null,
+  };
+
+  if (!warehouseName) {
+    return defaultFieldOrder;
+  }
+
+  const warehouseFieldOrderCookie = Cookie.get(`${warehouseName}FieldOrder`);
+
+  const warehouseFieldOrder: WarehouseFieldOrder = warehouseFieldOrderCookie
+    ? (JSON.parse(warehouseFieldOrderCookie) as WarehouseFieldOrder)
+    : defaultFieldOrder;
+
+  return warehouseFieldOrder;
 };
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
@@ -104,6 +131,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      console.debug(
+        `Setting ${warehouseName}.${fieldName} display as ${displayAs}`,
+      );
+
       warehouse.item_schema[fieldName].display_as = displayAs;
       setWarehouses(updatedWarehouses);
       setWarehouseRefreshCount(warehouseRefreshCount + 1);
@@ -138,6 +169,31 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     [warehouses],
   );
 
+  // *** Current Warehouse Field Order *** //
+
+  const [currentWarehouseFieldOrder, setCurrentWarehouseFieldOrder] =
+    useState<WarehouseFieldOrder | null>(null);
+
+  const searchParams = useSearchParams();
+
+  const updateWarehouseFieldOrder = useCallback(
+    (
+      warehouseName: string,
+      fieldName: string | null,
+      ascending: boolean | null,
+    ) => {
+      const newFieldOrder = {
+        fieldName: fieldName,
+        ascending: ascending,
+      };
+      setCurrentWarehouseFieldOrder(newFieldOrder);
+      setWarehouseRefreshCount(warehouseRefreshCount + 1);
+
+      Cookie.set(`${warehouseName}FieldOrder`, JSON.stringify(newFieldOrder));
+    },
+    [warehouseRefreshCount],
+  );
+
   // *** Initialisation *** //
 
   useEffect(() => {
@@ -147,6 +203,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setDarkMode(initialDarkMode);
     setShowTooltip(initialShowTooltip);
   }, []);
+
+  useEffect(() => {
+    const initialWarehouseFieldOrder = getWarehouseFieldOrder(
+      searchParams.get("warehouse"),
+    );
+    setCurrentWarehouseFieldOrder(initialWarehouseFieldOrder);
+  }, [searchParams]);
 
   useEffect(() => {
     refreshWarehouses()
@@ -172,6 +235,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setDisplayAsOption,
       setWarehouseRefreshCount,
       getDisplayAsOptions,
+      updateWarehouseFieldOrder,
+      currentWarehouseFieldOrder,
     }),
     [
       darkMode,
@@ -183,6 +248,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       warehouseRefreshCount,
       setDisplayAsOption,
       getDisplayAsOptions,
+      updateWarehouseFieldOrder,
+      currentWarehouseFieldOrder,
     ],
   );
 
