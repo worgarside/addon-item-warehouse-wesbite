@@ -17,8 +17,6 @@ interface CellProps {
 const cellHeightInPixels = 64;
 const cellWidthInPixels = 480;
 
-const oneDay = 24 * 60 * 60 * 1000;
-
 const TimeSince: React.FC<{
   displayAsOption: FieldDisplayType.Date | FieldDisplayType.DateTime;
   dttm: Date | undefined;
@@ -28,35 +26,27 @@ const TimeSince: React.FC<{
   }
 
   const now = new Date();
-
-  if (displayAsOption === FieldDisplayType.Date) {
-    const daysPast = Math.round(
-      Math.abs((now.getTime() - dttm.getTime()) / oneDay),
-    );
-    return (
-      <span className="text-muted">{`${daysPast} day${
-        daysPast != 1 ? "s" : ""
-      } ago`}</span>
-    );
-  }
-
   let secondsPast = (now.getTime() - dttm.getTime()) / 1000;
   let value: number = secondsPast;
   let unit: string = "";
 
   const timeUnits = [
-    { unit: "second", factor: 60 },
-    { unit: "minute", factor: 60 },
-    { unit: "hour", factor: 24 },
-    { unit: "day", factor: 30.44 },
-    { unit: "month", factor: 12 },
-    { unit: "year", factor: Infinity },
+    { unit: "second", factor: 60, showForDate: false },
+    { unit: "minute", factor: 60, showForDate: false },
+    { unit: "hour", factor: 24, showForDate: false },
+    { unit: "day", factor: 30.44, showForDate: true },
+    { unit: "month", factor: 12, showForDate: true },
+    { unit: "year", factor: Infinity, showForDate: true },
   ];
 
-  for (const { unit: u, factor } of timeUnits) {
-    if (secondsPast < factor || factor === Infinity) {
+  for (const { unit: u, factor, showForDate } of timeUnits) {
+    if (
+      (secondsPast < factor || factor === Infinity) &&
+      (showForDate || displayAsOption === FieldDisplayType.DateTime)
+    ) {
       unit = u;
       value = secondsPast;
+
       break;
     }
     secondsPast /= factor;
@@ -89,10 +79,18 @@ const Cell: React.FC<CellProps> = ({
   if (value === null) {
     formattedContent = "null";
   } else if (displayTimeSince) {
-    dttm = new Date(Number(value) * 1000);
+    if (type === "float" || type === "integer") {
+      dttm = new Date(Number(value) * 1000);
+    } else {
+      dttm = new Date(String(value));
+    }
 
     if (displayAsOption === FieldDisplayType.Date) {
-      formattedContent = dttm.toISOString().split("T")[0];
+      try {
+        formattedContent = dttm.toISOString().split("T")[0];
+      } catch (e) {
+        formattedContent = type + String(value);
+      }
     } else {
       if (type === "float") {
         formattedContent = dttm.toISOString();
