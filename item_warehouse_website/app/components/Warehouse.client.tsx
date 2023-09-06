@@ -1,18 +1,34 @@
+"use client";
+
 import React from "react";
 import styles from "../styles/Warehouse.module.scss";
 import Item from "./Item.client";
+import { WarehouseSchemaProperty } from "../services/api";
+import { useSettings } from "./SettingsContext.client";
 
-const Warehouse: React.FC<{
+interface WarehouseProps {
   fields: string[];
   items: Record<string, string | number | boolean | null>[];
   warehouseName: string;
   currentPage: number;
-}> = ({ fields, items, warehouseName, currentPage }) => {
+  warehouseSchema: Record<string, WarehouseSchemaProperty>;
+}
+
+const Warehouse: React.FC<WarehouseProps> = ({
+  fields,
+  items,
+  warehouseName,
+  currentPage,
+  warehouseSchema,
+}) => {
+  const { warehouseRefreshCount, getDisplayAsOptions } = useSettings();
+  const warehouseDisplayOptions = getDisplayAsOptions(warehouseName);
+
   return (
     <>
       <div className={`p-0 m-0 mt-3 ${styles.container}`}>
         <table className={`table table-hover table-striped table-bordered`}>
-          <thead className="thead-dark">
+          <thead>
             <tr>
               {fields.map((header) => (
                 <th
@@ -37,6 +53,9 @@ const Warehouse: React.FC<{
                   index={index}
                   warehouseName={warehouseName}
                   currentPage={currentPage}
+                  warehouseSchema={warehouseSchema}
+                  warehouseRefreshCount={warehouseRefreshCount}
+                  warehouseDisplayOptions={warehouseDisplayOptions}
                 />
               ),
             )}

@@ -5,11 +5,22 @@ interface ItemsResponse {
   page: number;
   total: number;
   items: Record<string, ItemValue>[];
+  fields: string[];
+}
+
+enum FieldDisplayType {
+  Text = "text",
+  Number = "number",
+  Date = "date",
+  DateTime = "datetime",
+  Boolean = "boolean",
+  Json = "json",
 }
 
 interface WarehouseSchemaProperty {
   autoincrement: string;
   default: string;
+  display_as: FieldDisplayType;
   index: boolean;
   key: string;
   nullable: number;
@@ -43,7 +54,7 @@ const getItemsFromWarehouse = async (
   const res = await fetch(
     `${apiBaseUrl}/v1/warehouses/${warehouseName}/items?page_size=${count}&page=${
       pageNumber || 1
-    }`,
+    }&include_fields=true`,
   );
 
   if (!res.ok) {
@@ -77,5 +88,55 @@ const getWarehouses = async (): Promise<Warehouse[]> => {
   return data.warehouses;
 };
 
-export { getItemsFromWarehouse, getWarehouse, getWarehouses, apiBaseUrl };
-export type { ItemsResponse, Warehouse as WarehouseType };
+const resetDisplayType = async (
+  fieldName: string,
+  warehouseName: string,
+): Promise<FieldDisplayType> => {
+  return await setDisplayType(fieldName, warehouseName, "reset");
+};
+
+const setDisplayType = async (
+  fieldName: string,
+  warehouseName: string,
+  displayType: FieldDisplayType | "reset",
+): Promise<FieldDisplayType> => {
+  const res = await fetch(
+    `${apiBaseUrl}/v1/warehouses/${warehouseName}/schema/${fieldName}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        display_as: displayType,
+      }),
+    },
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
+
+  if (displayType === "reset") {
+    const data = (await res.json()) as Record<string, WarehouseSchemaProperty>;
+
+    return data[fieldName].display_as;
+  }
+
+  return displayType;
+};
+
+export {
+  getItemsFromWarehouse,
+  getWarehouse,
+  getWarehouses,
+  apiBaseUrl,
+  FieldDisplayType,
+  resetDisplayType,
+  setDisplayType,
+};
+export type {
+  ItemsResponse,
+  Warehouse as WarehouseType,
+  WarehouseSchemaProperty,
+};

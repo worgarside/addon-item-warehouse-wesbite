@@ -83,41 +83,50 @@
   background-color: $body-tertiary-color;
   border-width: 0;
   border-style: none;
+
+  &:hover {
+    background-color: $pink-300;
+  }
 }
 
-.icon {
+.iconModalHeader {
   padding: 0;
   margin: 0;
 }
 
+$show-modal-icon-size: 1.2em;
+
 .buttonShowModal {
-  width: 1.5em;
   padding: 0;
-  height: 1.4em;
   position: absolute;
   bottom: 0;
   right: 0;
   z-index: 10;
-  background-color: unset;
+  background-color: $gray-100;
   border-width: 0;
   border-style: none;
-}
+  height: $show-modal-icon-size;
+  width: $show-modal-icon-size;
+  border-radius: 0.1em !important;
+  margin: calc((28px - $show-modal-icon-size) / 2);
 
-.buttonShowModal:hover {
-  transition: background-color 0.3s ease-in-out;
-  background-color: $gray-800;
-}
+  .iconShowModal {
+    height: $show-modal-icon-size;
+    width: $show-modal-icon-size;
+    padding: 0;
+    color: $gray-800;
+    transition: color 0.3s ease-in-out;
+    vertical-align: unset;
+  }
 
-.iconShowModal {
-  padding: 0;
-  color: $gray-800;
-  margin: 1px 0 0;
-  transition: color 0.3s ease-in-out;
-  vertical-align: unset;
-}
+  &:hover {
+    transition: background-color 0.3s ease-in-out;
+    background-color: $gray-100;
 
-.buttonShowModal:hover .iconShowModal {
-  color: $gray-100;
+    .iconShowModal {
+      color: $pink-300;
+    }
+  }
 }
 
 
@@ -131,15 +140,18 @@
     background-color: $dark;
   }
 
-  .buttonShowModal:hover {
-    background-color: $gray-200;
-  }
+  .buttonShowModal {
+    background-color: $gray-900;
 
   .iconShowModal {
     color: $gray-200;
   }
 
-  .buttonShowModal:hover .iconShowModal {
-    color: $gray-800;
+
+    &:hover {
+      .iconShowModal {
+        color: $blue-500;
+      }
+    }
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { apiBaseUrl } from "../services/api";
+import { WarehouseType, apiBaseUrl } from "../services/api";
 import styles from "../styles/Sidebar.module.scss";
 import Link from "next/link";
 import Icon from "@mdi/react";
@@ -27,28 +27,20 @@ import { useSettings } from "./SettingsContext.client";
 
 const poppins = Poppins({ subsets: ["latin"], weight: "300" });
 
-interface Warehouse {
-  name: string;
-}
-
 const hassioRefererPath: string = process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH
   ? "/" +
     process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH.replace(/(^\/+)|(\/+$)/g, "") +
     "/"
   : "";
 
-const Sidebar: React.FC<{
-  warehouses: Warehouse[];
-}> = ({ warehouses }) => {
+const Sidebar: React.FC = () => {
+  const router = useRouter();
+  const { showTooltip, warehouses } = useSettings();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
-
-  const router = useRouter();
-
-  const { showTooltip } = useSettings();
 
   const renderTooltip = (
     props: React.JSX.IntrinsicAttributes &
@@ -107,7 +99,7 @@ const Sidebar: React.FC<{
       </Container>
 
       <ListGroup className={`list-group-flush mb-auto`}>
-        {warehouses.map((warehouse: Warehouse) => (
+        {warehouses.map((warehouse: WarehouseType) => (
           <ListGroup.Item
             key={warehouse.name}
             active={false}

@@ -1,5 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import { apiBaseUrl, getWarehouses } from "services/api";
+import { apiBaseUrl } from "services/api";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import Sidebar from "./components/Sidebar.client";
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: "A database with an API in front of it.",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -35,8 +35,6 @@ export default async function RootLayout({
     );
   }
 
-  const warehouses = await getWarehouses();
-
   const colorMode = cookies().get("darkMode")?.value === "1" ? "dark" : "light";
 
   return (
@@ -44,7 +42,7 @@ export default async function RootLayout({
       <body className={poppins.className}>
         <div className={styles.container}>
           <SettingsProvider>
-            <Sidebar warehouses={warehouses} />
+            <Sidebar />
             <div className={styles.content}>{children}</div>
           </SettingsProvider>
         </div>

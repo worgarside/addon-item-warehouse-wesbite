@@ -7,11 +7,13 @@ import styles from "../styles/NavBar.module.scss";
 import Paginator from "./Paginator.client";
 import { Nav, Container, Navbar } from "react-bootstrap";
 
-const NavBar: React.FC<{
+interface NavBarProps {
   warehouse: WarehouseType;
   item_page: ItemsResponse;
   pageSize: string;
-}> = ({ warehouse, item_page, pageSize }) => {
+}
+
+const NavBar: React.FC<NavBarProps> = ({ warehouse, item_page, pageSize }) => {
   return (
     <Navbar className={styles.navBar}>
       <Container fluid={true}>
