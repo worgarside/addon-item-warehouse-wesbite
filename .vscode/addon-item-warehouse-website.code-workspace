@@ -40,6 +40,9 @@
         {
             "name": "SSH FS - /addons",
             "uri": "ssh://hasspi-config/addons"
-        }
+        },
+		{
+			"path": "/Users/worgarside/Library/Application Support/Code/User/globalStorage/buenon.scratchpads/scratchpads/"
+		},
     ]
 }

@@ -2,10 +2,11 @@ include .env
 export
 
 clean:
+	@$(MAKE) update-ip
 	find . \( -name "node_modules" -o -name "build" -o -name "dist" -o -name ".next" \) -type d -exec rm -rf {} +
 
 build:
-	$(MAKE) install
+	@$(MAKE) install
 	@npm ci
 	@npm run build
 
@@ -21,7 +22,7 @@ update-ip:
 
 
 website-local:
-	$(MAKE) install
+	@$(MAKE) install
 	@npm run dev
 
 # VSCode Shortcuts #

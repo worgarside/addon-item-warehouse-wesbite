@@ -104,6 +104,8 @@ const Cell: React.FC<CellProps> = ({
     formattedContent = Number(value).toLocaleString();
   } else if (displayAsOption === FieldDisplayType.Boolean) {
     formattedContent = value ? "✅" : "❌";
+  } else if (displayAsOption === FieldDisplayType.Json) {
+    formattedContent = JSON.stringify(value, null, 2);
   } else {
     formattedContent = String(value);
   }
