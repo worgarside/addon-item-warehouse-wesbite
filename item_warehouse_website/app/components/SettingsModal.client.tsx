@@ -135,9 +135,9 @@ const WarehouseTypeSetting: React.FC<WarehouseTypeSettingProps> = ({
           className={`me-2 ${styles.displayTypeSelect}`}
           onChange={handleChange}
         >
-          {Object.values(FieldDisplayType).map((type, index) => (
+          {Object.values(FieldDisplayType).map((type) => (
             <option
-              key={`${warehouseName}-${index}-${warehouseRefreshCount}`}
+              key={`${warehouseName}-${warehouseRefreshCount}`}
               value={type}
             >
               {type}

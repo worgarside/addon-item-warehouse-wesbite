@@ -115,7 +115,7 @@ const Cell: React.FC<CellProps> = ({
         clientHeight > cellHeightInPixels || clientWidth > cellWidthInPixels;
       setIsOverflowing(overflowCondition);
     }
-  }, []);
+  }, [value]);
 
   return (
     <td className="position-relative p-0">
