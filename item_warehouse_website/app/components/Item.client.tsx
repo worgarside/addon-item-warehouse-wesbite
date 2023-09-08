@@ -6,6 +6,7 @@ import { FieldDisplayType, WarehouseSchemaProperty } from "../services/api";
 
 interface ItemProps {
   item: Record<string, boolean | number | string | null>;
+  fields: string[];
   currentPage: number;
   warehouseName: string;
   warehouseSchema: Record<string, WarehouseSchemaProperty>;
@@ -15,6 +16,7 @@ interface ItemProps {
 
 const Item: React.FC<ItemProps> = ({
   item,
+  fields,
   currentPage,
   warehouseName,
   warehouseSchema,
@@ -23,9 +25,9 @@ const Item: React.FC<ItemProps> = ({
 }) => {
   return (
     <tr>
-      {Object.entries(item).map(([header, value]) => (
+      {fields.map((header) => (
         <Cell
-          value={value}
+          value={item[header]}
           header={header}
           key={`${warehouseName}-${currentPage}-${header}-${warehouseRefreshCount}`}
           displayAsOption={
