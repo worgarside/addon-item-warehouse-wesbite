@@ -50,12 +50,22 @@ const getItemsFromWarehouse = async (
   warehouseName: string,
   count: string,
   pageNumber: string,
+  orderBy: string | null,
+  ascending: boolean | null,
 ): Promise<ItemsResponse> => {
-  const res = await fetch(
-    `${apiBaseUrl}/v1/warehouses/${warehouseName}/items?page_size=${count}&page=${
-      pageNumber || 1
-    }&include_fields=true`,
-  );
+  let url = `${apiBaseUrl}/v1/warehouses/${warehouseName}/items?page_size=${count}&page=${
+    pageNumber || 1
+  }&include_fields=true`;
+
+  if (orderBy) {
+    url += `&order_by=${orderBy}`;
+  }
+
+  if (ascending !== null) {
+    url += `&ascending=${ascending}`;
+  }
+
+  const res = await fetch(url);
 
   if (!res.ok) {
     throw new Error("Failed to fetch data");

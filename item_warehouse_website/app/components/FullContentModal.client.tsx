@@ -70,7 +70,7 @@ const FullContentModal: React.FC<ModalProps> = ({ header, content }) => {
         <Modal.Body className={styles.modalBody}>
           <pre className={styles.content}>
             {content.split("\n").map((line, index) => (
-              <div key={index} className={styles.line}>
+              <div key={line} className={styles.line}>
                 <span
                   className={`${styles.lineNumber} ${
                     index === 0 ? styles.firstLine : ""
