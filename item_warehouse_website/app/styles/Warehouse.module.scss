@@ -1,34 +1,59 @@
-$hover-transition: all 0.5s ease;
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
 
-.orderByIcon {
-  padding: 0;
-}
-
-.iconContainer {
-  cursor: pointer;
-  position: relative;
-  transition: $hover-transition;
-
-  .iconDefault {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 1;
-    transition: $hover-transition;
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
   }
 
-  .iconHover {
-    opacity: 0;
-    transition: $hover-transition;
+  40% {
+    transform: translateY(-10px);
+  }
+
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.headerButton {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 0;
+  border: unset;
+
+  .headerIcon {
+    transition: all 0.2s ease;
+  }
+
+  &:focus, &:active, &:not(:disabled, .disabled).active {
+    background-color: initial !important;
+    border-color: initial !important;
+    box-shadow: none !important;
+    color: initial !important;
   }
 
   &:hover {
-    .iconDefault {
-      opacity: .5;
-    }
+    background-color: unset;
 
-    .iconHover {
-      opacity: .5;
+    .headerIcon {
+      animation: bounce 0.75s ease;
+      color: $pink-200;
+    }
+  }
+}
+
+@include color-mode(dark) {
+  .headerButton {
+    &:hover {
+      .headerIcon {
+        color: $blue-500;
+      }
     }
   }
 }

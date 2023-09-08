@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "../styles/Warehouse.module.scss";
 import Item from "./Item.client";
 import { WarehouseSchemaProperty } from "../services/api";
@@ -39,7 +39,6 @@ const Warehouse: React.FC<WarehouseProps> = ({
   warehouseSchema,
 }) => {
   const {
-    currentWarehouseFieldOrder,
     warehouseRefreshCount,
     getDisplayAsOptions,
     updateWarehouseFieldOrder,
@@ -50,26 +49,23 @@ const Warehouse: React.FC<WarehouseProps> = ({
   const [orderBy, setOrderBy] = useState<string | null>(null);
   const [ascending, setAscending] = useState<boolean | null>(null);
 
-  useEffect(() => {
-    const newOrderBy = currentWarehouseFieldOrder?.fieldName || null;
-    const newAscending =
-      currentWarehouseFieldOrder?.ascending === true
-        ? true
-        : currentWarehouseFieldOrder?.ascending === false
-        ? false
-        : null;
-
-    setOrderBy(newOrderBy);
-    setAscending(newAscending);
-
-    router.refresh();
-  }, [currentWarehouseFieldOrder, router]);
-
   const handleClick = (fieldName: string) => {
-    const newAscending = getNextSortOrder(ascending);
-    const newOrderBy = newAscending === null ? null : fieldName;
+    let newOrderBy: string | null = null;
+    let newAscending: boolean | null = null;
 
+    if (fieldName === orderBy) {
+      newAscending = getNextSortOrder(ascending);
+      newOrderBy = newAscending === null ? null : fieldName;
+      setOrderBy(newOrderBy);
+      setAscending(newAscending);
+    } else {
+      newOrderBy = fieldName;
+      newAscending = true;
+      setOrderBy(newOrderBy);
+      setAscending(newAscending);
+    }
     updateWarehouseFieldOrder(warehouseName, newOrderBy, newAscending);
+    router.refresh();
   };
 
   const primaryKeys = Object.keys(warehouseSchema).filter(
@@ -86,46 +82,27 @@ const Warehouse: React.FC<WarehouseProps> = ({
                 <th
                   scope="col"
                   key={header}
-                  className="font-monospace user-select-none p-1"
+                  className="font-monospace user-select-none p-0"
                 >
-                  <div className="d-flex justify-content-between align-items-center">
-                    <span className="me-2">{header}</span>
-                    <div className={`cursor-pointer ${styles.iconContainer}`}>
-                      <Button
-                        variant="outline-secondary"
-                        size="sm"
-                        className={`text-muted ${styles.orderByIcon} ${styles.iconDefault}`}
-                      >
-                        <Icon
-                          path={
-                            header == orderBy
-                              ? ascending
-                                ? mdiMenuUp
-                                : mdiMenuDown
-                              : mdiCircleSmall
-                          }
-                          size={1.25}
-                        />
-                      </Button>
-                      <Button
-                        onClick={() => handleClick(header)}
-                        variant="outline-secondary"
-                        size="sm"
-                        className={`text-muted ${styles.orderByIcon} ${styles.iconHover}`}
-                      >
-                        <Icon
-                          path={
-                            header == orderBy
-                              ? ascending
-                                ? mdiCircleSmall
-                                : mdiMenuUp
-                              : mdiMenuDown
-                          }
-                          size={1.25}
-                        />
-                      </Button>
-                    </div>
-                  </div>
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    onClick={() => handleClick(header)}
+                    className={`d-flex justify-content-between align-items-center text-muted cursor-pointer ${styles.headerButton}`}
+                  >
+                    <span>{header}</span>
+                    <Icon
+                      className={styles.headerIcon}
+                      path={
+                        header == orderBy
+                          ? ascending
+                            ? mdiMenuUp
+                            : mdiMenuDown
+                          : mdiCircleSmall
+                      }
+                      size={1.25}
+                    />
+                  </Button>
                 </th>
               ))}
             </tr>

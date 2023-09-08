@@ -187,11 +187,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         ascending: ascending,
       };
       setCurrentWarehouseFieldOrder(newFieldOrder);
-      setWarehouseRefreshCount(warehouseRefreshCount + 1);
 
       Cookie.set(`${warehouseName}FieldOrder`, JSON.stringify(newFieldOrder));
     },
-    [warehouseRefreshCount],
+    [],
   );
 
   // *** Initialisation *** //

@@ -67,8 +67,6 @@ const getItemsFromWarehouse = async (
 
   const res = await fetch(url);
 
-  console.log(orderBy, ascending, url);
-
   if (!res.ok) {
     throw new Error("Failed to fetch data");
   }
