@@ -41,6 +41,7 @@ const Warehouse: React.FC<WarehouseProps> = ({
   const {
     warehouseRefreshCount,
     getDisplayAsOptions,
+    currentWarehouseFieldOrder,
     updateWarehouseFieldOrder,
   } = useSettings();
   const warehouseDisplayOptions = getDisplayAsOptions(warehouseName);
@@ -48,6 +49,13 @@ const Warehouse: React.FC<WarehouseProps> = ({
 
   const [orderBy, setOrderBy] = useState<string | null>(null);
   const [ascending, setAscending] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (currentWarehouseFieldOrder) {
+      setOrderBy(currentWarehouseFieldOrder.fieldName);
+      setAscending(currentWarehouseFieldOrder.ascending);
+    }
+  }, [currentWarehouseFieldOrder]);
 
   const handleClick = (fieldName: string) => {
     let newOrderBy: string | null = null;
