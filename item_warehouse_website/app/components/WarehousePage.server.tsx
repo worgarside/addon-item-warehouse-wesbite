@@ -9,6 +9,7 @@ import {
 import { cookies } from "next/headers";
 
 import NavBar from "./Navbar.client";
+import _ from "lodash";
 
 interface WarehousePageProps {
   warehouseName: string;
@@ -35,12 +36,12 @@ const WarehousePage: React.FC<WarehousePageProps> = async ({
         ascending: null,
       };
 
-  let item_page: ItemsResponse;
+  let itemPage: ItemsResponse;
   let warehouse: WarehouseType;
 
   try {
     warehouse = await getWarehouse(warehouseName);
-    item_page = await getItemsFromWarehouse(
+    itemPage = await getItemsFromWarehouse(
       warehouseName,
       pageSize,
       page,
@@ -58,19 +59,42 @@ const WarehousePage: React.FC<WarehousePageProps> = async ({
     );
   }
 
-  const fields =
-    item_page.fields.length === 0
-      ? Object.keys(warehouse.item_schema)
-      : item_page.fields;
+  const columnOrderCookie = cookies().get(`${warehouseName}ColumnOrder`);
+
+  let fields: string[];
+
+  if (columnOrderCookie) {
+    fields = JSON.parse(columnOrderCookie.value) as string[];
+
+    // Check for new/removed columns, preserve existing order
+    if (!_.isEqual([...fields].sort(), [...itemPage.fields].sort())) {
+      fields = fields
+        .filter((field) => itemPage.fields.includes(field))
+        .concat(itemPage.fields.filter((field) => !fields.includes(field)));
+
+      cookies().set(`${warehouseName}ColumnOrder`, JSON.stringify(fields));
+    }
+  } else if (itemPage.fields.length === 0) {
+    fields = Object.keys(warehouse.item_schema);
+  } else {
+    fields = itemPage.fields;
+  }
 
   return (
     <>
-      <NavBar warehouse={warehouse} item_page={item_page} pageSize={pageSize} />
+      <NavBar
+        pageSize={pageSize}
+        currentPage={itemPage.page}
+        itemCount={itemPage.count}
+        itemTotal={itemPage.total}
+        itemName={warehouse.item_name}
+        warehouseName={warehouseName}
+      />
       <Warehouse
-        items={item_page.items}
+        items={itemPage.items}
         fields={fields}
         warehouseName={warehouseName}
-        currentPage={item_page.page}
+        currentPage={itemPage.page}
         warehouseSchema={warehouse.item_schema}
         warehouseFieldOrder={warehouseFieldOrder}
       />

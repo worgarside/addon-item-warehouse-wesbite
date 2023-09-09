@@ -7,11 +7,13 @@ import { WarehouseSchemaProperty } from "../services/api";
 import { useSettings } from "./SettingsContext.client";
 import Icon from "@mdi/react";
 import { mdiMenuDown, mdiMenuUp, mdiCircleSmall } from "@mdi/js";
+import Cookie from "js-cookie";
 import { WarehouseFieldOrder } from "./WarehousePage.server";
 import { Button } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 import { useDrag, useDrop, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+
 interface WarehouseProps {
   fields: string[];
   items: Record<string, string | number | boolean | null>[];
@@ -140,6 +142,7 @@ const Warehouse: React.FC<WarehouseProps> = ({
     newColumns.splice(toIndex, 0, from);
 
     setColumns(newColumns);
+    Cookie.set(`${warehouseName}ColumnOrder`, JSON.stringify(newColumns));
   };
 
   return (
