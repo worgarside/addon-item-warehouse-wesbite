@@ -2,7 +2,7 @@
 
 import React from "react";
 import Cell from "./Cell.client";
-import { FieldDisplayType, WarehouseSchemaProperty } from "../services/api";
+import { FieldDisplayType, WarehouseSchemaProperty } from "services/api";
 
 interface ItemProps {
   item: Record<string, boolean | number | string | null>;

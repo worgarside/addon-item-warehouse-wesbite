@@ -13,10 +13,18 @@ import {
   FieldDisplayType,
   WarehouseType,
   getWarehouses,
-} from "../services/api";
+} from "../../services/api";
 import _ from "lodash";
-import { WarehouseFieldOrder } from "./WarehousePage.server";
+import { WarehouseFieldOrder } from "../Warehouse/WarehousePage.server";
+import { arrayMove } from "@dnd-kit/sortable";
 import { useSearchParams } from "next/navigation";
+
+export interface UpdateWarehouseColumnOrderProps {
+  warehouseName: string;
+  oldIndex: number;
+  newIndex: number;
+  columns: string[];
+}
 
 interface SettingsContextProps {
   darkMode: boolean;
@@ -42,6 +50,14 @@ interface SettingsContextProps {
     fieldName: string | null,
     ascending: boolean | null,
   ) => void;
+  warehouseColumnOrderConfigs: Record<string, string[]>;
+  setWarehouseColumnOrderConfigs: (configs: Record<string, string[]>) => void;
+  updateWarehouseColumnOrder: (
+    warehouseName: string,
+    oldIndex: number,
+    newIndex: number,
+    columns: string[],
+  ) => string[];
 }
 
 const SettingsContext = createContext<SettingsContextProps | undefined>(
@@ -56,6 +72,33 @@ export const useSettings = () => {
   return context;
 };
 
+const getCookie = (name: string, debugLog: string | null = null) => {
+  const cookie = Cookie.get(name);
+  console.debug(
+    `Getting ${name} cookie ${
+      debugLog ? `for '${debugLog}'` : null
+    }: ${cookie}`,
+  );
+  return cookie;
+};
+
+const setCookie = (
+  name: string,
+  value: string | null,
+  debugLog: string | null = null,
+) => {
+  console.debug(
+    `Setting ${name} cookie to ${value} ${
+      debugLog ? `for '${debugLog}'` : null
+    }`,
+  );
+  if (value === null) {
+    Cookie.remove(name);
+  } else {
+    Cookie.set(name, value);
+  }
+};
+
 const getWarehouseFieldOrder = (warehouseName: string | null) => {
   const defaultFieldOrder: WarehouseFieldOrder = {
     fieldName: null,
@@ -66,7 +109,10 @@ const getWarehouseFieldOrder = (warehouseName: string | null) => {
     return defaultFieldOrder;
   }
 
-  const warehouseFieldOrderCookie = Cookie.get(`${warehouseName}FieldOrder`);
+  const warehouseFieldOrderCookie = getCookie(
+    `${warehouseName}FieldOrder`,
+    "getWarehouseFieldOrder",
+  );
 
   const warehouseFieldOrder: WarehouseFieldOrder = warehouseFieldOrderCookie
     ? (JSON.parse(warehouseFieldOrderCookie) as WarehouseFieldOrder)
@@ -79,13 +125,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   // *** Dark Mode *** //
 
   const [darkMode, setDarkMode] = useState<boolean>(
-    Cookie.get("darkMode") === "1" || false,
+    getCookie("darkMode", "useState") === "1" || false,
   );
 
   const toggleDarkMode = useCallback(() => setDarkMode(!darkMode), [darkMode]);
 
   useEffect(() => {
-    Cookie.set("darkMode", darkMode ? "1" : "0");
+    setCookie("darkMode", darkMode ? "1" : "0", "darkMode changed");
     document.documentElement.setAttribute(
       "data-bs-theme",
       darkMode ? "dark" : "light",
@@ -95,7 +141,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   // *** API Documentation Tooltip *** //
 
   const [showTooltip, setShowTooltip] = useState<boolean>(
-    Cookie.get("showTooltip") === "1" || false,
+    getCookie("showTooltip", "useState") === "1" || false,
   );
 
   const toggleShowTooltip = useCallback(
@@ -104,7 +150,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
-    Cookie.set("showTooltip", showTooltip ? "1" : "0");
+    setCookie("showTooltip", showTooltip ? "1" : "0");
   }, [showTooltip]);
 
   // *** Warehouses *** //
@@ -174,8 +220,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [currentWarehouseFieldOrder, setCurrentWarehouseFieldOrder] =
     useState<WarehouseFieldOrder | null>(null);
 
-  const searchParams = useSearchParams();
-
   const updateWarehouseFieldOrder = useCallback(
     (
       warehouseName: string,
@@ -188,27 +232,77 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       };
       setCurrentWarehouseFieldOrder(newFieldOrder);
 
-      Cookie.set(`${warehouseName}FieldOrder`, JSON.stringify(newFieldOrder));
+      setCookie(
+        `${warehouseName}FieldOrder`,
+        fieldName ? JSON.stringify(newFieldOrder) : null,
+        "updateWarehouseFieldOrder",
+      );
     },
     [],
+  );
+
+  // *** Current Warehouse Column Order *** //
+
+  const [warehouseColumnOrderConfigs, setWarehouseColumnOrderConfigs] =
+    useState<Record<string, string[]>>({});
+
+  const updateWarehouseColumnOrder = useCallback(
+    (
+      warehouseName: string,
+      oldIndex: number,
+      newIndex: number,
+      columns: string[],
+    ) => {
+      const newColumnOrder = arrayMove(columns, oldIndex, newIndex);
+
+      const newWarehouseColumnOrderConfigs = {
+        ...warehouseColumnOrderConfigs,
+        [warehouseName]: newColumnOrder,
+      };
+
+      setWarehouseColumnOrderConfigs(newWarehouseColumnOrderConfigs);
+
+      setCookie(
+        `${warehouseName}ColumnOrder`,
+        JSON.stringify(newColumnOrder),
+        "updateWarehouseColumnOrder",
+      );
+
+      return newWarehouseColumnOrderConfigs[warehouseName];
+    },
+    [warehouseColumnOrderConfigs],
   );
 
   // *** Initialisation *** //
 
   useEffect(() => {
-    const initialDarkMode = Cookie.get("darkMode") === "1";
-    const initialShowTooltip = Cookie.get("showTooltip") === "1";
+    const initialDarkMode = getCookie("darkMode") === "1";
+    const initialShowTooltip = getCookie("showTooltip") === "1";
 
     setDarkMode(initialDarkMode);
     setShowTooltip(initialShowTooltip);
   }, []);
 
+  const searchParams = useSearchParams();
+
+  const currentWarehouseName = searchParams.get("warehouse") || null;
+
   useEffect(() => {
-    const initialWarehouseFieldOrder = getWarehouseFieldOrder(
-      searchParams.get("warehouse"),
-    );
+    const initialWarehouseFieldOrder =
+      getWarehouseFieldOrder(currentWarehouseName);
+
     setCurrentWarehouseFieldOrder(initialWarehouseFieldOrder);
-  }, [searchParams]);
+
+    // const initialWarehouseColumnOrder = getCookie(
+    //   `${currentWarehouseName}ColumnOrder`,
+    // );
+
+    // setCurrentWarehouseColumnOrder(
+    //   initialWarehouseColumnOrder
+    //     ? (JSON.parse(initialWarehouseColumnOrder) as string[])
+    //     : null,
+    // );
+  }, [currentWarehouseName]);
 
   useEffect(() => {
     refreshWarehouses()
@@ -218,6 +312,42 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (warehouses) {
+      const newWarehouseColumnOrderConfigs: Record<string, string[]> = {};
+
+      warehouses.forEach((warehouse: WarehouseType) => {
+        const columnOrderCookie = getCookie(`${warehouse.name}ColumnOrder`);
+        if (columnOrderCookie) {
+          const cookieFields = JSON.parse(columnOrderCookie) as string[];
+          const warehouseFields = Object.keys(warehouse.item_schema);
+
+          if (
+            !_.isEqual(
+              [...cookieFields].sort((a, b) => a.localeCompare(b)),
+              [...warehouseFields].sort((a, b) => a.localeCompare(b)),
+            )
+          ) {
+            const fields = cookieFields
+              .filter((field) => warehouseFields.includes(field))
+              .concat(
+                warehouseFields.filter(
+                  (field) => !cookieFields.includes(field),
+                ),
+              );
+
+            setCookie(`${warehouse.name}ColumnOrder`, JSON.stringify(fields));
+            newWarehouseColumnOrderConfigs[warehouse.name] = fields;
+          } else {
+            newWarehouseColumnOrderConfigs[warehouse.name] = cookieFields;
+          }
+        }
+      });
+
+      setWarehouseColumnOrderConfigs(newWarehouseColumnOrderConfigs);
+    }
+  }, [warehouses]);
 
   // *** Values Export *** //
 
@@ -236,6 +366,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       getDisplayAsOptions,
       updateWarehouseFieldOrder,
       currentWarehouseFieldOrder,
+      warehouseColumnOrderConfigs,
+      setWarehouseColumnOrderConfigs,
+      updateWarehouseColumnOrder,
     }),
     [
       darkMode,
@@ -249,6 +382,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       getDisplayAsOptions,
       updateWarehouseFieldOrder,
       currentWarehouseFieldOrder,
+      warehouseColumnOrderConfigs,
+      setWarehouseColumnOrderConfigs,
+      updateWarehouseColumnOrder,
     ],
   );
 

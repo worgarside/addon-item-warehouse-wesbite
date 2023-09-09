@@ -22,8 +22,8 @@ import {
   TooltipProps,
 } from "react-bootstrap";
 import { useRouter } from "next/navigation";
-import SettingsModal from "./SettingsModal.client";
-import { useSettings } from "./SettingsContext.client";
+import SettingsModal from "./Settings/SettingsModal.client";
+import { useSettings } from "./Settings/SettingsContext.client";
 
 const poppins = Poppins({ subsets: ["latin"], weight: "300" });
 

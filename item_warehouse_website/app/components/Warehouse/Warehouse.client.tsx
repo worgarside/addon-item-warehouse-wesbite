@@ -1,13 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import styles from "../styles/Warehouse.module.scss";
+import styles from "styles/Warehouse.module.scss";
 import Item from "./Item.client";
-import { WarehouseSchemaProperty } from "../services/api";
-import { useSettings } from "./SettingsContext.client";
+import { WarehouseSchemaProperty } from "services/api";
+import { useSettings } from "../Settings/SettingsContext.client";
 import Icon from "@mdi/react";
 import { mdiMenuDown, mdiMenuUp, mdiCircleSmall } from "@mdi/js";
-import Cookie from "js-cookie";
 import { WarehouseFieldOrder } from "./WarehousePage.server";
 import { Button } from "react-bootstrap";
 import { useRouter } from "next/navigation";
@@ -15,8 +14,8 @@ import { useDrag, useDrop, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
 interface WarehouseProps {
-  fields: string[];
   items: Record<string, string | number | boolean | null>[];
+  fields: string[];
   warehouseName: string;
   currentPage: number;
   warehouseSchema: Record<string, WarehouseSchemaProperty>;
@@ -90,8 +89,8 @@ const DroppableColumnHeader: React.FC<DraggableHeaderProps> = ({
 };
 
 const Warehouse: React.FC<WarehouseProps> = ({
-  fields,
   items,
+  fields,
   warehouseName,
   currentPage,
   warehouseSchema,
@@ -101,7 +100,10 @@ const Warehouse: React.FC<WarehouseProps> = ({
     getDisplayAsOptions,
     currentWarehouseFieldOrder,
     updateWarehouseFieldOrder,
+    warehouseColumnOrderConfigs,
+    updateWarehouseColumnOrder,
   } = useSettings();
+
   const warehouseDisplayOptions = getDisplayAsOptions(warehouseName);
   const router = useRouter();
 
@@ -115,7 +117,7 @@ const Warehouse: React.FC<WarehouseProps> = ({
     }
   }, [currentWarehouseFieldOrder]);
 
-  const handleClick = (fieldName: string) => {
+  const handleHeaderClick = (fieldName: string) => {
     let newOrderBy: string | null = null;
     let newAscending: boolean | null = null;
 
@@ -134,24 +136,18 @@ const Warehouse: React.FC<WarehouseProps> = ({
     router.refresh();
   };
 
+  const handleHeaderDrop = (from: string, to: string) => {
+    const thing = warehouseColumnOrderConfigs[warehouseName];
+
+    const fromIndex = thing.indexOf(from);
+    const toIndex = thing.indexOf(to);
+
+    updateWarehouseColumnOrder(warehouseName, fromIndex, toIndex, thing);
+  };
+
   const primaryKeys = Object.keys(warehouseSchema).filter(
     (key) => warehouseSchema[key]?.primary_key,
   );
-
-  const [columns, setColumns] = useState(fields);
-
-  const handleDrop = (from: string, to: string) => {
-    const newColumns = [...columns];
-
-    const fromIndex = columns.indexOf(from);
-    const toIndex = columns.indexOf(to);
-
-    newColumns.splice(fromIndex, 1);
-    newColumns.splice(toIndex, 0, from);
-
-    setColumns(newColumns);
-    Cookie.set(`${warehouseName}ColumnOrder`, JSON.stringify(newColumns));
-  };
 
   return (
     <>
@@ -160,27 +156,31 @@ const Warehouse: React.FC<WarehouseProps> = ({
           <table className={`table table-hover table-striped table-bordered`}>
             <thead>
               <tr>
-                {columns.map((header) => (
-                  <DroppableColumnHeader
-                    key={header}
-                    header={header}
-                    onDrop={handleDrop}
-                    handleClick={handleClick}
-                    orderBy={orderBy}
-                    ascending={ascending}
-                  />
-                ))}
+                {(warehouseColumnOrderConfigs[warehouseName] || fields).map(
+                  (header) => (
+                    <DroppableColumnHeader
+                      key={header}
+                      header={header}
+                      onDrop={handleHeaderDrop}
+                      handleClick={handleHeaderClick}
+                      orderBy={orderBy}
+                      ascending={ascending}
+                    />
+                  ),
+                )}
               </tr>
             </thead>
             <tbody>
               {items.map(
                 (item: Record<string, string | number | boolean | null>) => (
                   <Item
-                    key={`${currentPage}-${JSON.stringify(
+                    key={`${warehouseName}-${currentPage}-${JSON.stringify(
                       warehouseDisplayOptions,
                     )}-${primaryKeys.map((key) => item[key]).join("-")}`}
                     item={item}
-                    fields={columns}
+                    fields={
+                      warehouseColumnOrderConfigs[warehouseName] || fields
+                    }
                     currentPage={currentPage}
                     warehouseName={warehouseName}
                     warehouseSchema={warehouseSchema}

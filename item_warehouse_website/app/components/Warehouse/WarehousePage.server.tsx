@@ -5,11 +5,10 @@ import {
   WarehouseType,
   getItemsFromWarehouse,
   getWarehouse,
-} from "../services/api";
+} from "services/api";
 import { cookies } from "next/headers";
 
-import NavBar from "./Navbar.client";
-import _ from "lodash";
+import NavBar from "./NavBar/NavBar.client";
 
 interface WarehousePageProps {
   warehouseName: string;
@@ -36,6 +35,20 @@ const WarehousePage: React.FC<WarehousePageProps> = async ({
         ascending: null,
       };
 
+  console.log(
+    `warehouseFieldOrderCookieCookie: ${JSON.stringify(
+      warehouseFieldOrderCookie,
+    )}`,
+  );
+
+  const warehouseColumnOrderCookie = cookies().get(
+    `${warehouseName}ColumnOrder`,
+  );
+
+  let warehouseColumnOrder: string[] | null = warehouseColumnOrderCookie
+    ? (JSON.parse(warehouseColumnOrderCookie.value) as string[])
+    : null;
+
   let itemPage: ItemsResponse;
   let warehouse: WarehouseType;
 
@@ -47,6 +60,7 @@ const WarehousePage: React.FC<WarehousePageProps> = async ({
       page,
       warehouseFieldOrder.fieldName,
       warehouseFieldOrder.ascending,
+      warehouseColumnOrder,
     );
   } catch (error) {
     return (
@@ -59,26 +73,7 @@ const WarehousePage: React.FC<WarehousePageProps> = async ({
     );
   }
 
-  const columnOrderCookie = cookies().get(`${warehouseName}ColumnOrder`);
-
-  let fields: string[];
-
-  if (columnOrderCookie) {
-    fields = JSON.parse(columnOrderCookie.value) as string[];
-
-    // Check for new/removed columns, preserve existing order
-    if (!_.isEqual([...fields].sort(), [...itemPage.fields].sort())) {
-      fields = fields
-        .filter((field) => itemPage.fields.includes(field))
-        .concat(itemPage.fields.filter((field) => !fields.includes(field)));
-
-      cookies().set(`${warehouseName}ColumnOrder`, JSON.stringify(fields));
-    }
-  } else if (itemPage.fields.length === 0) {
-    fields = Object.keys(warehouse.item_schema);
-  } else {
-    fields = itemPage.fields;
-  }
+  warehouseColumnOrder = warehouseColumnOrder || itemPage.fields;
 
   return (
     <>
@@ -92,7 +87,7 @@ const WarehousePage: React.FC<WarehousePageProps> = async ({
       />
       <Warehouse
         items={itemPage.items}
-        fields={fields}
+        fields={warehouseColumnOrder}
         warehouseName={warehouseName}
         currentPage={itemPage.page}
         warehouseSchema={warehouse.item_schema}

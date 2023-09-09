@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import React from "react";
 import Pagination from "react-bootstrap/Pagination";
-import styles from "../styles/Paginator.module.scss";
+import styles from "../../../styles/Paginator.module.scss";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 
 const hassioRefererPath: string = process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH
@@ -64,7 +64,7 @@ const Paginator: React.FC<PaginatorProps> = ({
     for (let number = 1; number <= totalPages; number++) {
       items.push(
         <PaginationItem
-          key={number}
+          key={`paginator-item-${number}`}
           number={number}
           currentPage={currentPage}
           warehouseName={warehouseName}
@@ -75,7 +75,7 @@ const Paginator: React.FC<PaginatorProps> = ({
   } else {
     items.push(
       <PaginationItem
-        key={1}
+        key={"paginator-item-1"}
         number={1}
         currentPage={currentPage}
         warehouseName={warehouseName}
@@ -91,7 +91,7 @@ const Paginator: React.FC<PaginatorProps> = ({
       ) {
         items.push(
           <PaginationItem
-            key={number}
+            key={`paginator-item-${number}`}
             number={number}
             currentPage={currentPage}
             warehouseName={warehouseName}
@@ -109,7 +109,7 @@ const Paginator: React.FC<PaginatorProps> = ({
 
       items.push(
         <PaginationItem
-          key={totalPages}
+          key={`paginator-item-${totalPages}`}
           number={totalPages}
           currentPage={currentPage}
           warehouseName={warehouseName}
@@ -134,7 +134,7 @@ const Paginator: React.FC<PaginatorProps> = ({
       ) {
         items.push(
           <PaginationItem
-            key={number}
+            key={`paginator-item-${number}`}
             number={number}
             currentPage={currentPage}
             warehouseName={warehouseName}
@@ -157,7 +157,7 @@ const Paginator: React.FC<PaginatorProps> = ({
       ) {
         items.push(
           <PaginationItem
-            key={number}
+            key={`paginator-item-${number}`}
             number={number}
             currentPage={currentPage}
             warehouseName={warehouseName}
@@ -175,7 +175,7 @@ const Paginator: React.FC<PaginatorProps> = ({
 
       items.push(
         <PaginationItem
-          key={totalPages}
+          key={`paginator-item-${totalPages}`}
           number={totalPages}
           currentPage={currentPage}
           warehouseName={warehouseName}

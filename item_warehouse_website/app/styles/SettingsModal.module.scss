@@ -5,7 +5,11 @@
   position: absolute;
   bottom: 0;
   width: inherit;
-  cursor: pointer;
+  cursor: grabbing !important;
+} 
+
+.noCursor {
+  cursor: unset !important;
 }
 
 .settingDescription {
@@ -24,6 +28,14 @@
 .icon {
   padding: 0;
   margin: 0;
+}
+
+.iconDrag {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 .modalBody {
