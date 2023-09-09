@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../styles/Warehouse.module.scss";
 import Item from "./Item.client";
 import { WarehouseSchemaProperty } from "../services/api";
