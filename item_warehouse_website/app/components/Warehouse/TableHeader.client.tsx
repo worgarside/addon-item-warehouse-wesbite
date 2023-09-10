@@ -45,6 +45,7 @@ export interface TableHeaderProps {
     columns: string[],
   ) => string[];
   currentWarehouseFieldOrder: WarehouseFieldOrder | null;
+  showActionsColumn: boolean;
 }
 
 const TableHeader: React.FC<TableHeaderProps> = ({
@@ -54,6 +55,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   warehouseColumnOrderConfigs,
   updateWarehouseColumnOrder,
   currentWarehouseFieldOrder,
+  showActionsColumn,
 }) => {
   const router = useRouter();
 
@@ -136,13 +138,15 @@ const TableHeader: React.FC<TableHeaderProps> = ({
                 ascending={ascending}
               />
             ))}
-            <th scope="col" className="font-monospace user-select-none p-0">
-              <div className={`d-flex align-items-center text-muted`}>
-                <span className={`d-flex ${styles.actionsHeader} p-2`}>
-                  Actions
-                </span>
-              </div>
-            </th>
+            {showActionsColumn && (
+              <th scope="col" className="font-monospace user-select-none p-0">
+                <div className={`d-flex align-items-center text-muted`}>
+                  <span className={`d-flex ${styles.actionsHeader} p-2`}>
+                    Actions
+                  </span>
+                </div>
+              </th>
+            )}
           </tr>
         </SortableContext>
       </thead>

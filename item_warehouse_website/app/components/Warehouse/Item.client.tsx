@@ -12,6 +12,7 @@ interface ItemProps {
   warehouseName: string;
   primaryKeyNames: string[];
   warehouseSchema: Record<string, WarehouseSchemaProperty>;
+  showActionsColumn: boolean;
   warehouseRefreshCount: number;
   warehouseDisplayOptions: Record<string, FieldDisplayType>;
 }
@@ -23,6 +24,7 @@ const Item: React.FC<ItemProps> = ({
   warehouseName,
   primaryKeyNames,
   warehouseSchema,
+  showActionsColumn,
   warehouseRefreshCount,
   warehouseDisplayOptions,
 }) => {
@@ -40,11 +42,13 @@ const Item: React.FC<ItemProps> = ({
           type={warehouseSchema[header].type}
         />
       ))}
-      <ActionsCell
-        item={item}
-        primaryKeyNames={primaryKeyNames}
-        warehouseName={warehouseName}
-      />
+      {showActionsColumn && (
+        <ActionsCell
+          item={item}
+          primaryKeyNames={primaryKeyNames}
+          warehouseName={warehouseName}
+        />
+      )}
     </tr>
   );
 };

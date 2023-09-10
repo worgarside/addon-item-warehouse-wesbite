@@ -30,6 +30,7 @@ const Warehouse: React.FC<WarehouseProps> = ({
     updateWarehouseFieldOrder,
     warehouseColumnOrderConfigs,
     updateWarehouseColumnOrder,
+    showActionsColumn,
   } = useSettings();
 
   const warehouseDisplayOptions = getDisplayAsOptions(warehouseName);
@@ -48,6 +49,7 @@ const Warehouse: React.FC<WarehouseProps> = ({
           warehouseColumnOrderConfigs={warehouseColumnOrderConfigs}
           updateWarehouseColumnOrder={updateWarehouseColumnOrder}
           currentWarehouseFieldOrder={currentWarehouseFieldOrder}
+          showActionsColumn={showActionsColumn}
         />
         <tbody>
           {items.map(
@@ -64,6 +66,7 @@ const Warehouse: React.FC<WarehouseProps> = ({
                 warehouseSchema={warehouseSchema}
                 warehouseRefreshCount={warehouseRefreshCount}
                 warehouseDisplayOptions={warehouseDisplayOptions}
+                showActionsColumn={showActionsColumn}
               />
             ),
           )}
