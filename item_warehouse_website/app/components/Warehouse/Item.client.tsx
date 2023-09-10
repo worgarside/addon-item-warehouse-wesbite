@@ -3,12 +3,14 @@
 import React from "react";
 import Cell from "./Cell.client";
 import { FieldDisplayType, WarehouseSchemaProperty } from "services/api";
+import ActionsCell from "./ActionsCell.client";
 
 interface ItemProps {
   item: Record<string, boolean | number | string | null>;
   fields: string[];
   currentPage: number;
   warehouseName: string;
+  primaryKeyNames: string[];
   warehouseSchema: Record<string, WarehouseSchemaProperty>;
   warehouseRefreshCount: number;
   warehouseDisplayOptions: Record<string, FieldDisplayType>;
@@ -19,6 +21,7 @@ const Item: React.FC<ItemProps> = ({
   fields,
   currentPage,
   warehouseName,
+  primaryKeyNames,
   warehouseSchema,
   warehouseRefreshCount,
   warehouseDisplayOptions,
@@ -37,6 +40,11 @@ const Item: React.FC<ItemProps> = ({
           type={warehouseSchema[header].type}
         />
       ))}
+      <ActionsCell
+        item={item}
+        primaryKeyNames={primaryKeyNames}
+        warehouseName={warehouseName}
+      />
     </tr>
   );
 };

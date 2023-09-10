@@ -59,6 +59,7 @@ const Warehouse: React.FC<WarehouseProps> = ({
                 item={item}
                 fields={warehouseColumnOrderConfigs[warehouseName] || fields}
                 currentPage={currentPage}
+                primaryKeyNames={primaryKeys}
                 warehouseName={warehouseName}
                 warehouseSchema={warehouseSchema}
                 warehouseRefreshCount={warehouseRefreshCount}

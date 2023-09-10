@@ -16,6 +16,7 @@ import {
   SortableContext,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import styles from "styles/Warehouse/TableHeader.module.scss";
 
 const getNextSortOrder = (current: boolean | null): boolean | null => {
   switch (current) {
@@ -135,6 +136,13 @@ const TableHeader: React.FC<TableHeaderProps> = ({
                 ascending={ascending}
               />
             ))}
+            <th scope="col" className="font-monospace user-select-none p-0">
+              <div className={`d-flex align-items-center text-muted`}>
+                <span className={`d-flex ${styles.actionsHeader} p-2`}>
+                  Actions
+                </span>
+              </div>
+            </th>
           </tr>
         </SortableContext>
       </thead>

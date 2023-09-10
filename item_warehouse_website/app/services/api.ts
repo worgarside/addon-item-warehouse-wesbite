@@ -46,6 +46,21 @@ interface WarehousesResponse {
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+const toQueryString = (
+  params: Record<string, string | number | boolean | null>,
+) => {
+  return Object.keys(params)
+    .map((key) => {
+      const value = params[key];
+      if (value === null) {
+        return "";
+      }
+      return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+    })
+    .filter(Boolean)
+    .join("&");
+};
+
 const getItemsFromWarehouse = async (
   warehouseName: string,
   count: string,
@@ -143,6 +158,26 @@ const setDisplayType = async (
   return displayType;
 };
 
+const deleteItem = async (
+  warehouseName: string,
+  itemPk: Record<string, ItemValue>,
+): Promise<boolean> => {
+  try {
+    const res = await fetch(
+      `${apiBaseUrl}/v1/warehouses/${warehouseName}/items?${toQueryString(
+        itemPk,
+      )}`,
+      {
+        method: "DELETE",
+      },
+    );
+    return res.status === 204;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+};
+
 export {
   getItemsFromWarehouse,
   getWarehouse,
@@ -151,6 +186,7 @@ export {
   FieldDisplayType,
   resetDisplayType,
   setDisplayType,
+  deleteItem,
 };
 export type {
   ItemsResponse,
