@@ -54,7 +54,7 @@ const WarehouseTypeSetting: React.FC<WarehouseTypeSettingProps> = ({
 
   return (
     <Form.Group
-      className={`border-bottom d-flex align-items-center py-2 ${styles.noCursor}`}
+      className={`border-bottom d-flex align-items-center p-2 mx-2 ${styles.noCursor}`}
       ref={setNodeRef}
       style={{
         transform: CSS.Transform.toString(transform),

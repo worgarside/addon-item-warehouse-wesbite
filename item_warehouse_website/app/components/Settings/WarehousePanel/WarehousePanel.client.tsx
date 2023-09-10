@@ -42,8 +42,9 @@ const DangerButtonSetting: React.FC<{
   text: string;
 }> = ({ onClick, text }) => {
   return (
-    <Form.Group className="border-bottom d-flex align-items-center py-2">
-      <Form.Label>{text}</Form.Label>
+    <Form.Group className="border-bottom d-flex align-items-center p-2 mx-2">
+      <Form.Label className="lh-lg ms-2 my-0 pb-1">{text}</Form.Label>
+      <div className="flex-grow-1"></div>
       <Button className={`btn-danger ${styles.button}`} onClick={onClick}>
         <Icon path={mdiRestart} size={1} className={styles.icon} />
       </Button>
@@ -109,11 +110,13 @@ export const WarehousePanel: React.FC<WarehousePanelProps> = ({
       </Accordion.Item>
       <Accordion.Item eventKey="dangerZone">
         <Accordion.Header>Danger Zone</Accordion.Header>
-        <Accordion.Body>
+        <Accordion.Body className="p-0">
           <Form>
             <DangerButtonSetting
               onClick={() => {
-                updateWarehouseColumnOrder(warehouse.name, 0, 0, null);
+                if (window.confirm("Confirm column order reset?")) {
+                  updateWarehouseColumnOrder(warehouse.name, 0, 0, null);
+                }
               }}
               text="Reset Column Order"
             />
