@@ -16,9 +16,11 @@ const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
     warehouses,
     warehouseRefreshCount,
     darkMode,
-    toggleDarkMode,
     showTooltip,
+    showActionsColumn,
+    toggleDarkMode,
     toggleShowTooltip,
+    toggleShowActionsColumn,
     setDisplayAsOption,
     updateWarehouseColumnOrder,
     warehouseColumnOrderConfigs,
@@ -106,6 +108,8 @@ const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
                   toggleDarkMode={toggleDarkMode}
                   showTooltip={showTooltip}
                   toggleShowTooltip={toggleShowTooltip}
+                  showActionsColumn={showActionsColumn}
+                  toggleShowActionsColumn={toggleShowActionsColumn}
                 />
               </Tab.Pane>
 

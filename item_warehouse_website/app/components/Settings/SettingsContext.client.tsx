@@ -27,6 +27,8 @@ interface SettingsContextProps {
   toggleDarkMode: () => void;
   showTooltip: boolean;
   toggleShowTooltip: () => void;
+  showActionsColumn: boolean;
+  toggleShowActionsColumn: () => void;
   warehouses: WarehouseType[];
   setWarehouses: (warehouses: WarehouseType[]) => void;
   refreshWarehouses: () => void;
@@ -148,6 +150,21 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setCookie("showTooltip", showTooltip ? "1" : "0");
   }, [showTooltip]);
+
+  // *** Actions Column *** //
+
+  const [showActionsColumn, setShowActionsColumn] = useState<boolean>(
+    getCookie("showActionsColumn", "useState") === "1" || false,
+  );
+
+  const toggleShowActionsColumn = useCallback(
+    () => setShowActionsColumn(!showActionsColumn),
+    [showActionsColumn],
+  );
+
+  useEffect(() => {
+    setCookie("showActionsColumn", showActionsColumn ? "1" : "0");
+  }, [showActionsColumn]);
 
   // *** Warehouses *** //
 
@@ -282,9 +299,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initialDarkMode = getCookie("darkMode") === "1";
     const initialShowTooltip = getCookie("showTooltip") === "1";
+    const initialShowActionsColumn = getCookie("ShowActionsColumn") === "1";
 
     setDarkMode(initialDarkMode);
     setShowTooltip(initialShowTooltip);
+    setShowActionsColumn(initialShowActionsColumn);
   }, []);
 
   const searchParams = useSearchParams();
@@ -349,8 +368,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     () => ({
       darkMode,
       showTooltip,
+      showActionsColumn,
       toggleDarkMode,
       toggleShowTooltip,
+      toggleShowActionsColumn,
       warehouses,
       setWarehouses,
       refreshWarehouses,
@@ -367,8 +388,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     [
       darkMode,
       showTooltip,
+      showActionsColumn,
       toggleDarkMode,
       toggleShowTooltip,
+      toggleShowActionsColumn,
       warehouses,
       refreshWarehouses,
       warehouseRefreshCount,

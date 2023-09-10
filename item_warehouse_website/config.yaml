@@ -1,7 +1,7 @@
 ---
 name: "Item Warehouse: Website"
 description: A warehouse with an API on the front of it
-version: 1.9.0
+version: 1.10.0
 slug: item_warehouse_website
 init: false
 arch:
@@ -22,3 +22,6 @@ ingress_port: 3000
 ports:
   3000/tcp: 3000
 webui: http://[HOST]:[PORT:3000]
+panel_icon: mdi:package-variant-closed
+panel_title: Item Warehouse
+advanced: true
