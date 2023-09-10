@@ -300,16 +300,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       getWarehouseFieldOrder(currentWarehouseName);
 
     setCurrentWarehouseFieldOrder(initialWarehouseFieldOrder);
-
-    // const initialWarehouseColumnOrder = getCookie(
-    //   `${currentWarehouseName}ColumnOrder`,
-    // );
-
-    // setCurrentWarehouseColumnOrder(
-    //   initialWarehouseColumnOrder
-    //     ? (JSON.parse(initialWarehouseColumnOrder) as string[])
-    //     : null,
-    // );
   }, [currentWarehouseName]);
 
   useEffect(() => {

@@ -73,7 +73,7 @@ const WarehousePage: React.FC<WarehousePageProps> = async ({
     );
   }
 
-  warehouseColumnOrder = warehouseColumnOrder || itemPage.fields;
+  warehouseColumnOrder = warehouseColumnOrder ?? itemPage.fields;
 
   return (
     <>
