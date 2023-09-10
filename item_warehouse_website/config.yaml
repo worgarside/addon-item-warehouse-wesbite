@@ -22,3 +22,6 @@ ingress_port: 3000
 ports:
   3000/tcp: 3000
 webui: http://[HOST]:[PORT:3000]
+panel_icon: mdi:package-variant-closed
+panel_title: Item Warehouse
+advanced: true
