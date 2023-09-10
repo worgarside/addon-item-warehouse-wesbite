@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { WarehouseType, apiBaseUrl } from "../services/api";
-import styles from "../styles/Sidebar.module.scss";
+import { WarehouseType, apiBaseUrl } from "services/api";
+import styles from "styles/Sidebar.module.scss";
 import Link from "next/link";
 import Icon from "@mdi/react";
 import {
@@ -22,8 +22,8 @@ import {
   TooltipProps,
 } from "react-bootstrap";
 import { useRouter } from "next/navigation";
-import SettingsModal from "./SettingsModal.client";
-import { useSettings } from "./SettingsContext.client";
+import SettingsModal from "./Settings/SettingsModal.client";
+import { useSettings } from "./Settings/SettingsContext.client";
 
 const poppins = Poppins({ subsets: ["latin"], weight: "300" });
 

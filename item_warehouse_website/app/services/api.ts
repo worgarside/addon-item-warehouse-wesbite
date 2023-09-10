@@ -52,6 +52,7 @@ const getItemsFromWarehouse = async (
   pageNumber: string,
   orderBy: string | null,
   ascending: boolean | null,
+  fields: string[] | null,
 ): Promise<ItemsResponse> => {
   let url = `${apiBaseUrl}/v1/warehouses/${warehouseName}/items?page_size=${count}&page=${
     pageNumber || 1
@@ -64,6 +65,12 @@ const getItemsFromWarehouse = async (
   if (ascending !== null) {
     url += `&ascending=${ascending}`;
   }
+
+  if (fields) {
+    url += `&fields=${fields.join(",")}`;
+  }
+
+  console.log(url.replace(apiBaseUrl || "", ""));
 
   const res = await fetch(url);
 

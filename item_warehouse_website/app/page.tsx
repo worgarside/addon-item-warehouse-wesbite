@@ -1,4 +1,4 @@
-import WarehousePage from "components/WarehousePage.server";
+import WarehousePage from "@/components/Warehouse/WarehousePage.server";
 
 export default function Page({
   searchParams,
