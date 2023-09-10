@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import React from "react";
 import Pagination from "react-bootstrap/Pagination";
-import styles from "../../../styles/Paginator.module.scss";
+import styles from "styles/Warehouse/NavBar/Paginator.module.scss";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context";
 
 const hassioRefererPath: string = process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH

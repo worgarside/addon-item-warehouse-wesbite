@@ -2,10 +2,10 @@
 
 import React, { useRef, useState, useEffect } from "react";
 
-import styles from "../../styles/Cell.module.scss";
+import styles from "styles/Warehouse/Cell.module.scss";
 
 import FullContentModal from "./FullContentModal.client";
-import { FieldDisplayType } from "../../services/api";
+import { FieldDisplayType } from "services/api";
 
 interface CellProps {
   value: boolean | number | string | null;

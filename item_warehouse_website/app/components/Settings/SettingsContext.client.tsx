@@ -56,7 +56,7 @@ interface SettingsContextProps {
     warehouseName: string,
     oldIndex: number,
     newIndex: number,
-    columns: string[],
+    columns: string[] | null,
   ) => string[];
 }
 
@@ -251,9 +251,17 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       warehouseName: string,
       oldIndex: number,
       newIndex: number,
-      columns: string[],
+      columns: string[] | null,
     ) => {
-      const newColumnOrder = arrayMove(columns, oldIndex, newIndex);
+      let newColumnOrder: string[];
+
+      if (!columns) {
+        newColumnOrder = [...warehouseColumnOrderConfigs[warehouseName]].sort(
+          (a, b) => a.localeCompare(b),
+        );
+      } else {
+        newColumnOrder = arrayMove(columns, oldIndex, newIndex);
+      }
 
       const newWarehouseColumnOrderConfigs = {
         ...warehouseColumnOrderConfigs,

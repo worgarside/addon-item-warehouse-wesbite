@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import styles from "styles/SettingsModal.module.scss";
+import styles from "styles/Settings/WarehousePanel/WarehouseTypeSetting.module.scss";
 import Icon from "@mdi/react";
 import { mdiDrag, mdiRestart } from "@mdi/js";
-import { Button, Form, Row } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import {
   FieldDisplayType,
   WarehouseSchemaProperty,
@@ -53,8 +53,8 @@ const WarehouseTypeSetting: React.FC<WarehouseTypeSettingProps> = ({
     useSortable({ id: name });
 
   return (
-    <Row
-      className={`border-bottom ${styles.noCursor}`}
+    <Form.Group
+      className={`border-bottom d-flex align-items-center py-2 ${styles.noCursor}`}
       ref={setNodeRef}
       style={{
         transform: CSS.Transform.toString(transform),
@@ -62,38 +62,36 @@ const WarehouseTypeSetting: React.FC<WarehouseTypeSettingProps> = ({
       }}
       {...attributes}
     >
-      <Form className="d-flex align-items-center my-2">
-        <Icon
-          path={mdiDrag}
-          size={1}
-          className={`${styles.icon} ${styles.iconDrag}`}
-          {...listeners}
-          data-dnd-handle
-        />
-        <Form.Label className="lh-lg ms-2 fs-5 my-0 pb-1">
-          <code>{name}</code>
-        </Form.Label>
-        <div className={`flex-grow-1 ${styles.noCursor}`}></div>
-        <span className="pe-3 text-muted">Display as:</span>
-        <Form.Select
-          defaultValue={fieldDefinition.display_as}
-          className={`me-2 ${styles.displayTypeSelect}`}
-          onChange={handleDisplayTypeChange}
-        >
-          {Object.values(FieldDisplayType).map((type) => (
-            <option
-              key={`displayType-${warehouseName}-${name}-${type}`}
-              value={type}
-            >
-              {type}
-            </option>
-          ))}
-        </Form.Select>
-        <Button className={styles.button} onClick={handleDisplayTypeReset}>
-          <Icon path={mdiRestart} size={1} className={styles.icon} />
-        </Button>
-      </Form>
-    </Row>
+      <Icon
+        path={mdiDrag}
+        size={1}
+        className={`${styles.icon} ${styles.iconDrag}`}
+        {...listeners}
+        data-dnd-handle
+      />
+      <Form.Label className="lh-lg ms-2 fs-5 my-0 pb-1">
+        <code>{name}</code>
+      </Form.Label>
+      <div className={`flex-grow-1 ${styles.noCursor}`}></div>
+      <span className="pe-3 text-muted">Display as:</span>
+      <Form.Select
+        defaultValue={fieldDefinition.display_as}
+        className={`me-2 ${styles.displayTypeSelect}`}
+        onChange={handleDisplayTypeChange}
+      >
+        {Object.values(FieldDisplayType).map((type) => (
+          <option
+            key={`displayType-${warehouseName}-${name}-${type}`}
+            value={type}
+          >
+            {type}
+          </option>
+        ))}
+      </Form.Select>
+      <Button className={styles.button} onClick={handleDisplayTypeReset}>
+        <Icon path={mdiRestart} size={1} className={styles.icon} />
+      </Button>
+    </Form.Group>
   );
 };
 

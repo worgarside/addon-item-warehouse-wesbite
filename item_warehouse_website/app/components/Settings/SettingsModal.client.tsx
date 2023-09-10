@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import styles from "../../styles/SettingsModal.module.scss";
-import sidebarStyles from "../../styles/Sidebar.module.scss";
+import styles from "styles/Settings/SettingsModal.module.scss";
+import sidebarStyles from "styles/Sidebar.module.scss";
 import Icon from "@mdi/react";
 import { mdiClose, mdiTune } from "@mdi/js";
 import { Button, Col, ListGroup, Modal, Nav, Tab } from "react-bootstrap";
 import { useSettings } from "./SettingsContext.client";
-import { WarehousePanel } from "./WarehousePanel.client";
+import { WarehousePanel } from "./WarehousePanel/WarehousePanel.client";
 import { SettingsPanel } from "./SettingsPanel.client";
 
 const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {

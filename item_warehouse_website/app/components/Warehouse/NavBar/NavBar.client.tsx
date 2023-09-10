@@ -2,7 +2,7 @@
 
 import React from "react";
 import PageSizeDropdown from "./PageSizeDropdown.client";
-import styles from "../../../styles/NavBar.module.scss";
+import styles from "styles/Warehouse/NavBar/NavBar.module.scss";
 import Paginator from "./Paginator.client";
 import { Nav, Container, Navbar } from "react-bootstrap";
 

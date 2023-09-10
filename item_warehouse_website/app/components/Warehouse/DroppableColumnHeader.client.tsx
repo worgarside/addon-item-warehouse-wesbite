@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import styles from "styles/Warehouse.module.scss";
+import styles from "styles/Warehouse/DroppableColumnHeader.module.scss";
 import Icon from "@mdi/react";
 import { mdiMenuDown, mdiMenuUp, mdiCircleSmall } from "@mdi/js";
 import { Button } from "react-bootstrap";

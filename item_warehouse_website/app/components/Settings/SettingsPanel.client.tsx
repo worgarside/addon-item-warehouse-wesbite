@@ -28,7 +28,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
       <ToggleSetting
         name="API Documentation Tooltip"
         initialValue={showTooltip}
-        description={`Display a tooltip with a link to the API documentation when you hover over "Warehouses"`}
+        description='Display a tooltip with a link to the API documentation when you hover over "Warehouses"'
         callback={toggleShowTooltip}
       />
     </Container>

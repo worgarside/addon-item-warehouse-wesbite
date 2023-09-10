@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import styles from "styles/SettingsModal.module.scss";
+import styles from "styles/Settings/WarehousePanel/WarehouseTypeSetting.module.scss";
 import { Form, Row } from "react-bootstrap";
 
 interface ToggleSettingProps {

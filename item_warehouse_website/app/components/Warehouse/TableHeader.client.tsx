@@ -12,11 +12,11 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-
 import {
   SortableContext,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
+
 const getNextSortOrder = (current: boolean | null): boolean | null => {
   switch (current) {
     case true:

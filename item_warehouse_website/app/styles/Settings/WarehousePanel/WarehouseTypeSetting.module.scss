@@ -1,20 +1,6 @@
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";
 
-.settings {
-  position: absolute;
-  bottom: 0;
-  width: inherit;
-  cursor: grabbing !important;
-} 
-
-.noCursor {
-  cursor: unset !important;
-}
-
-.settingDescription {
-  font-size: 0.8em;
-}
 
 .button {
   padding: 0 !important;
@@ -30,16 +16,20 @@
   margin: 0;
 }
 
+.noCursor {
+  cursor: unset !important;
+}
+
+.settingDescription {
+  font-size: 0.8em;
+}
+
 .iconDrag {
   cursor: grab;
 
   &:active {
     cursor: grabbing;
   }
-}
-
-.modalBody {
-  height: 75vh;
 }
 
 .displayTypeSelect {
