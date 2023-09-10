@@ -3,7 +3,7 @@
 import React from "react";
 import Item from "./Item.client";
 import { WarehouseSchemaProperty } from "services/api";
-import { useSettings } from "../Settings/SettingsContext.client";
+import { useSettings } from "components/Settings/SettingsContext.client";
 import { WarehouseFieldOrder } from "./WarehousePage.server";
 import TableHeader from "./TableHeader.client";
 

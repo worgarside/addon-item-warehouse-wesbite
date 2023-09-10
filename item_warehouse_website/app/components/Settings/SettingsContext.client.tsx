@@ -9,13 +9,9 @@ import React, {
   useState,
 } from "react";
 import Cookie from "js-cookie";
-import {
-  FieldDisplayType,
-  WarehouseType,
-  getWarehouses,
-} from "../../services/api";
+import { FieldDisplayType, WarehouseType, getWarehouses } from "services/api";
 import _ from "lodash";
-import { WarehouseFieldOrder } from "../Warehouse/WarehousePage.server";
+import { WarehouseFieldOrder } from "components/Warehouse/WarehousePage.server";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useSearchParams } from "next/navigation";
 
