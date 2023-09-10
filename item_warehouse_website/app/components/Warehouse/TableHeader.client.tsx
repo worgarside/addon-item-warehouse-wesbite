@@ -94,12 +94,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
       const oldIndex = fields.indexOf(String(active.id));
       const newIndex = fields.indexOf(String(over?.id || ""));
 
-      updateWarehouseColumnOrder(
-        warehouseName,
-        oldIndex,
-        newIndex,
-        fields,
-      );
+      updateWarehouseColumnOrder(warehouseName, oldIndex, newIndex, fields);
     }
   };
 
@@ -110,7 +105,13 @@ const TableHeader: React.FC<TableHeaderProps> = ({
     }
   }, [currentWarehouseFieldOrder]);
 
-  const sensors = useSensors(useSensor(PointerSensor));
+  const pointerSensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 5,
+    },
+  });
+
+  const sensors = useSensors(pointerSensor);
 
   return (
     <DndContext
