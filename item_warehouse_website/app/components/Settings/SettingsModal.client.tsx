@@ -125,7 +125,8 @@ const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
                     setDisplayAsOption={setDisplayAsOption}
                     updateWarehouseColumnOrder={updateWarehouseColumnOrder}
                     warehouseColumnOrder={
-                      warehouseColumnOrderConfigs[warehouse.name]
+                      warehouseColumnOrderConfigs[warehouse.name] ||
+                      Object.keys(warehouse.item_schema)
                     }
                   />
                 </Tab.Pane>
