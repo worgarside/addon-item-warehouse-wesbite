@@ -9,6 +9,8 @@ interface SettingsPanelProps {
   toggleDarkMode: () => void;
   showTooltip: boolean;
   toggleShowTooltip: () => void;
+  showActionsColumn: boolean;
+  toggleShowActionsColumn: () => void;
 }
 
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({
@@ -16,6 +18,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   toggleDarkMode,
   showTooltip,
   toggleShowTooltip,
+  showActionsColumn,
+  toggleShowActionsColumn,
 }) => {
   return (
     <Container>
@@ -30,6 +34,12 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
         initialValue={showTooltip}
         description='Display a tooltip with a link to the API documentation when you hover over "Warehouses"'
         callback={toggleShowTooltip}
+      />
+      <ToggleSetting
+        name="Show Actions"
+        initialValue={showActionsColumn}
+        description="Show the actions column in the warehouse tables"
+        callback={toggleShowActionsColumn}
       />
     </Container>
   );
