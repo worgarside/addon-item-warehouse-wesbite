@@ -5,7 +5,7 @@ import { Poppins } from "next/font/google";
 import Sidebar from "./components/Sidebar.client";
 import styles from "./styles/layout.module.scss";
 import { cookies } from "next/headers";
-import { SettingsProvider } from "./components/SettingsContext.client";
+import { SettingsProvider } from "./components/Settings/SettingsContext.client";
 
 const poppins = Poppins({ subsets: ["latin"], weight: "300" });
 

@@ -10,7 +10,7 @@ import {
 } from "@mdi/js";
 import Icon from "@mdi/react";
 
-import styles from "../styles/FullContentModal.module.scss";
+import styles from "styles/Warehouse/FullContentModal.module.scss";
 
 import { Button, Modal } from "react-bootstrap";
 
@@ -70,7 +70,7 @@ const FullContentModal: React.FC<ModalProps> = ({ header, content }) => {
         <Modal.Body className={styles.modalBody}>
           <pre className={styles.content}>
             {content.split("\n").map((line, index) => (
-              <div key={line} className={styles.line}>
+              <div key={`line-${line}`} className={styles.line}>
                 <span
                   className={`${styles.lineNumber} ${
                     index === 0 ? styles.firstLine : ""

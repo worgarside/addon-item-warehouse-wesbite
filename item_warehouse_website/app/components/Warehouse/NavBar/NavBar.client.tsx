@@ -2,36 +2,45 @@
 
 import React from "react";
 import PageSizeDropdown from "./PageSizeDropdown.client";
-import { ItemsResponse, WarehouseType } from "../services/api";
-import styles from "../styles/NavBar.module.scss";
+import styles from "styles/Warehouse/NavBar/NavBar.module.scss";
 import Paginator from "./Paginator.client";
 import { Nav, Container, Navbar } from "react-bootstrap";
 
 interface NavBarProps {
-  warehouse: WarehouseType;
-  item_page: ItemsResponse;
   pageSize: string;
+  currentPage: number;
+  itemCount: number;
+  itemTotal: number;
+  itemName: string;
+  warehouseName: string;
 }
 
-const NavBar: React.FC<NavBarProps> = ({ warehouse, item_page, pageSize }) => {
+const NavBar: React.FC<NavBarProps> = ({
+  itemCount,
+  itemTotal,
+  pageSize,
+  currentPage,
+  itemName,
+  warehouseName,
+}) => {
   return (
     <Navbar className={styles.navBar}>
       <Container fluid={true}>
         <Navbar.Collapse>
           <Nav className="me-auto mb-2 mb-lg-0 user-select-none">
-            <h1 className="mb-0 mt-auto">{warehouse.name}</h1>
+            <h1 className="mb-0 mt-auto">{warehouseName}</h1>
             <span className="mb-1 mt-auto ms-3 text-muted">
-              {`Viewing ${item_page.count} of ${item_page.total} ${warehouse.item_name}s`}
+              {`Viewing ${itemCount} of ${itemTotal} ${itemName}s`}
             </span>
           </Nav>
           <Paginator
-            currentPage={item_page.page}
-            totalPages={Math.ceil(item_page.total / parseInt(pageSize))}
-            warehouseName={warehouse.name}
+            currentPage={currentPage}
+            totalPages={Math.ceil(itemTotal / parseInt(pageSize))}
+            warehouseName={warehouseName}
           />
           <PageSizeDropdown
             currentPageSize={pageSize}
-            warehouseName={warehouse.name}
+            warehouseName={warehouseName}
           />
         </Navbar.Collapse>
       </Container>

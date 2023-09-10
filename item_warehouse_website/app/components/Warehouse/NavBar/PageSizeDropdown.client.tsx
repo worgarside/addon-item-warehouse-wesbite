@@ -3,7 +3,7 @@
 import Dropdown from "react-bootstrap/Dropdown";
 import Cookie from "js-cookie";
 import { useRouter, useSearchParams } from "next/navigation";
-import styles from "../styles/PageSizeDropdown.module.scss";
+import styles from "styles/Warehouse/NavBar/PageSizeDropdown.module.scss";
 
 const hassioRefererPath: string = process.env.NEXT_PUBLIC_HASSIO_REFERER_PATH
   ? "/" +
@@ -67,7 +67,7 @@ const PageSizeDropdown: React.FC<PageSizeDropdownProps> = ({
                     : null
                 }`}
                 eventKey={pageSize.toString()}
-                key={pageSize}
+                key={`pageSize-${pageSize}`}
               >
                 {pageSize}
               </Dropdown.Item>

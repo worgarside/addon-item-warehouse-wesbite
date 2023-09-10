@@ -1,0 +1,37 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
+
+.button {
+  padding: 0 !important;
+  margin: 0.5em $spacer * 0.25;
+  width: $spacer * 2;
+  height: $spacer * 2;
+  border-width: 0 !important;
+  border-style: none !important;
+}
+
+.icon {
+  padding: 0;
+  margin: 0;
+}
+
+.noCursor {
+  cursor: unset !important;
+}
+
+.settingDescription {
+  font-size: 0.8em;
+}
+
+.iconDrag {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.displayTypeSelect {
+  max-width: 13ch;
+}
