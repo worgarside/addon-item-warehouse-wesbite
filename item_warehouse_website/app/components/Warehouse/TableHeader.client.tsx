@@ -4,7 +4,19 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import DroppableColumnHeader from "./DroppableColumnHeader.client";
 import { WarehouseFieldOrder } from "./WarehousePage.server";
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 
+import {
+  SortableContext,
+  horizontalListSortingStrategy,
+} from "@dnd-kit/sortable";
 const getNextSortOrder = (current: boolean | null): boolean | null => {
   switch (current) {
     case true:
@@ -75,6 +87,22 @@ const TableHeader: React.FC<TableHeaderProps> = ({
     updateWarehouseColumnOrder(warehouseName, fromIndex, toIndex, columns);
   };
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = fields.indexOf(String(active.id));
+      const newIndex = fields.indexOf(String(over?.id || ""));
+
+      updateWarehouseColumnOrder(
+        warehouseName,
+        oldIndex,
+        newIndex,
+        fields,
+      );
+    }
+  };
+
   useEffect(() => {
     if (currentWarehouseFieldOrder) {
       setOrderBy(currentWarehouseFieldOrder.fieldName);
@@ -82,21 +110,34 @@ const TableHeader: React.FC<TableHeaderProps> = ({
     }
   }, [currentWarehouseFieldOrder]);
 
+  const sensors = useSensors(useSensor(PointerSensor));
+
   return (
-    <thead>
-      <tr>
-        {fields.map((header) => (
-          <DroppableColumnHeader
-            key={header}
-            header={header}
-            onDrop={handleHeaderDrop}
-            handleClick={handleHeaderClick}
-            orderBy={orderBy}
-            ascending={ascending}
-          />
-        ))}
-      </tr>
-    </thead>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <thead>
+        <SortableContext
+          items={fields}
+          strategy={horizontalListSortingStrategy}
+        >
+          <tr>
+            {fields.map((header) => (
+              <DroppableColumnHeader
+                key={header}
+                header={header}
+                onDrop={handleHeaderDrop}
+                handleClick={handleHeaderClick}
+                orderBy={orderBy}
+                ascending={ascending}
+              />
+            ))}
+          </tr>
+        </SortableContext>
+      </thead>
+    </DndContext>
   );
 };
 

@@ -23,15 +23,13 @@ interface WarehouseTypeSettingProps {
     fieldName: string,
     displayAs: FieldDisplayType,
   ) => void;
-  id: string;
 }
 
-export const WarehouseTypeSetting: React.FC<WarehouseTypeSettingProps> = ({
+const WarehouseTypeSetting: React.FC<WarehouseTypeSettingProps> = ({
   name,
   fieldDefinition,
   warehouseName,
   setDisplayAsOption,
-  id,
 }) => {
   const handleDisplayTypeReset = () => {
     (async () => {
@@ -39,9 +37,6 @@ export const WarehouseTypeSetting: React.FC<WarehouseTypeSettingProps> = ({
       setDisplayAsOption(warehouseName, name, resetDisplayOption);
     })().catch((error) => console.error("Ah, bugger:", error));
   };
-
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id });
 
   const handleDisplayTypeChange = (
     event: React.ChangeEvent<HTMLSelectElement>,
@@ -53,6 +48,9 @@ export const WarehouseTypeSetting: React.FC<WarehouseTypeSettingProps> = ({
       await setDisplayType(name, warehouseName, displayType);
     })().catch((error) => console.error("Ah, bugger:", error));
   };
+
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: name });
 
   return (
     <Row
@@ -98,3 +96,5 @@ export const WarehouseTypeSetting: React.FC<WarehouseTypeSettingProps> = ({
     </Row>
   );
 };
+
+export default WarehouseTypeSetting;

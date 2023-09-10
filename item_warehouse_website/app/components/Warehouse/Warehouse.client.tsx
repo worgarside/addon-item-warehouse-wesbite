@@ -5,8 +5,6 @@ import Item from "./Item.client";
 import { WarehouseSchemaProperty } from "services/api";
 import { useSettings } from "../Settings/SettingsContext.client";
 import { WarehouseFieldOrder } from "./WarehousePage.server";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import TableHeader from "./TableHeader.client";
 
 interface WarehouseProps {
@@ -41,42 +39,36 @@ const Warehouse: React.FC<WarehouseProps> = ({
   );
 
   return (
-    <>
-      <div className="p-0 m-0 mt-3 overflow-scroll">
-        <DndProvider backend={HTML5Backend}>
-          <table className={`table table-hover table-striped table-bordered`}>
-            <TableHeader
-              fields={warehouseColumnOrderConfigs[warehouseName] || fields}
-              updateWarehouseFieldOrder={updateWarehouseFieldOrder}
-              warehouseName={warehouseName}
-              warehouseColumnOrderConfigs={warehouseColumnOrderConfigs}
-              updateWarehouseColumnOrder={updateWarehouseColumnOrder}
-              currentWarehouseFieldOrder={currentWarehouseFieldOrder}
-            />
-            <tbody>
-              {items.map(
-                (item: Record<string, string | number | boolean | null>) => (
-                  <Item
-                    key={`${warehouseName}-${currentPage}-${JSON.stringify(
-                      warehouseDisplayOptions,
-                    )}-${primaryKeys.map((key) => item[key]).join("-")}`}
-                    item={item}
-                    fields={
-                      warehouseColumnOrderConfigs[warehouseName] || fields
-                    }
-                    currentPage={currentPage}
-                    warehouseName={warehouseName}
-                    warehouseSchema={warehouseSchema}
-                    warehouseRefreshCount={warehouseRefreshCount}
-                    warehouseDisplayOptions={warehouseDisplayOptions}
-                  />
-                ),
-              )}
-            </tbody>
-          </table>
-        </DndProvider>
-      </div>
-    </>
+    <div className="p-0 m-0 mt-3 overflow-scroll">
+      <table className={`table table-hover table-striped table-bordered`}>
+        <TableHeader
+          fields={warehouseColumnOrderConfigs[warehouseName] || fields}
+          updateWarehouseFieldOrder={updateWarehouseFieldOrder}
+          warehouseName={warehouseName}
+          warehouseColumnOrderConfigs={warehouseColumnOrderConfigs}
+          updateWarehouseColumnOrder={updateWarehouseColumnOrder}
+          currentWarehouseFieldOrder={currentWarehouseFieldOrder}
+        />
+        <tbody>
+          {items.map(
+            (item: Record<string, string | number | boolean | null>) => (
+              <Item
+                key={`${warehouseName}-${currentPage}-${JSON.stringify(
+                  warehouseDisplayOptions,
+                )}-${primaryKeys.map((key) => item[key]).join("-")}`}
+                item={item}
+                fields={warehouseColumnOrderConfigs[warehouseName] || fields}
+                currentPage={currentPage}
+                warehouseName={warehouseName}
+                warehouseSchema={warehouseSchema}
+                warehouseRefreshCount={warehouseRefreshCount}
+                warehouseDisplayOptions={warehouseDisplayOptions}
+              />
+            ),
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 };
 

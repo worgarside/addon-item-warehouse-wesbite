@@ -14,7 +14,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { WarehouseTypeSetting } from "./WarehouseTypeSetting.client";
+import WarehouseTypeSetting from "./WarehouseTypeSetting.client";
 import { FieldDisplayType, WarehouseType } from "services/api";
 
 interface WarehousePanelProps {
@@ -72,7 +72,6 @@ export const WarehousePanel: React.FC<WarehousePanelProps> = ({
           {columns.map((column) => (
             <WarehouseTypeSetting
               setDisplayAsOption={setDisplayAsOption}
-              id={column}
               name={column}
               key={`warehouseTypeSetting-${warehouse.name}-${column}`}
               fieldDefinition={warehouse.item_schema[column]}

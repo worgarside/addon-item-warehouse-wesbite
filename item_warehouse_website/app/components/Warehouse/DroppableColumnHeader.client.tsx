@@ -1,10 +1,12 @@
 "use client";
+
 import React from "react";
 import styles from "styles/Warehouse.module.scss";
 import Icon from "@mdi/react";
 import { mdiMenuDown, mdiMenuUp, mdiCircleSmall } from "@mdi/js";
 import { Button } from "react-bootstrap";
-import { useDrag, useDrop } from "react-dnd";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 export interface DraggableHeaderProps {
   header: string;
@@ -16,27 +18,24 @@ export interface DraggableHeaderProps {
 
 const DroppableColumnHeader: React.FC<DraggableHeaderProps> = ({
   header,
-  onDrop,
   handleClick,
   orderBy,
   ascending,
 }) => {
-  const [, refDrag] = useDrag({
-    type: "COLUMN",
-    item: { header },
-  });
-
-  const [, refDrop] = useDrop({
-    accept: "COLUMN",
-    drop: (item: { header: string }) => onDrop(item.header, header),
-  });
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: header });
 
   return (
     <th
       scope="col"
-      ref={(el) => refDrag(refDrop(el))}
-      key={header}
       className="font-monospace user-select-none p-0"
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition: transition ?? undefined,
+      }}
+      {...attributes}
+      {...listeners}
     >
       <Button
         variant="outline-secondary"
