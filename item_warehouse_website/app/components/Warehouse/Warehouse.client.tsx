@@ -73,7 +73,9 @@ const DroppableColumnHeader: React.FC<DraggableHeaderProps> = ({
       >
         <span>{header}</span>
         <Icon
-          className={styles.headerIcon}
+          className={`${styles.headerIcon} ${
+            header === orderBy && styles.headerIconActive
+          }`}
           path={
             header == orderBy
               ? ascending
