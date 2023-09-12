@@ -60,6 +60,15 @@ const TimeSince: React.FC<{
   );
 };
 
+const typeIsNumeric = (type: string) => {
+  return (
+    type === "float" ||
+    type === "integer" ||
+    type === "double" ||
+    type === "decimal"
+  );
+};
+
 const Cell: React.FC<CellProps> = ({
   value,
   header,
@@ -79,7 +88,7 @@ const Cell: React.FC<CellProps> = ({
   if (value === null) {
     formattedContent = "null";
   } else if (displayTimeSince) {
-    if (type === "float" || type === "integer") {
+    if (typeIsNumeric(type)) {
       dttm = new Date(Number(value) * 1000);
     } else {
       dttm = new Date(String(value));
@@ -92,7 +101,7 @@ const Cell: React.FC<CellProps> = ({
         formattedContent = type + String(value);
       }
     } else {
-      if (type === "float") {
+      if (typeIsNumeric(type)) {
         formattedContent = dttm.toISOString();
       } else {
         formattedContent = String(value);
