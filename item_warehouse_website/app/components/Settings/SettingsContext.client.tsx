@@ -56,6 +56,7 @@ interface SettingsContextProps {
     newIndex: number,
     columns: string[] | null,
   ) => string[];
+  useFallbackActionsColumn: boolean;
 }
 
 const SettingsContext = createContext<SettingsContextProps | undefined>(
@@ -72,10 +73,9 @@ export const useSettings = () => {
 
 const getCookie = (name: string, debugLog: string | null = null) => {
   const cookie = Cookie.get(name);
+
   console.debug(
-    `Getting ${name} cookie ${
-      debugLog ? `for '${debugLog}'` : null
-    }: ${cookie}`,
+    `Getting ${name} cookie ${debugLog ? `for '${debugLog}'` : ""}: ${cookie}`,
   );
   return cookie;
 };
@@ -153,17 +153,18 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   // *** Actions Column *** //
 
+  const [useFallbackActionsColumn, setUseFallbackActionsColumn] =
+    useState<boolean>(true);
+
   const [showActionsColumn, setShowActionsColumn] = useState<boolean>(
     getCookie("showActionsColumn", "useState") === "1" || false,
   );
 
-  const toggleShowActionsColumn = useCallback(
-    () => setShowActionsColumn(!showActionsColumn),
-    [showActionsColumn],
-  );
-
-  useEffect(() => {
-    setCookie("showActionsColumn", showActionsColumn ? "1" : "0");
+  const toggleShowActionsColumn = useCallback(() => {
+    const newShowActionsColumn = !showActionsColumn;
+    setShowActionsColumn(newShowActionsColumn);
+    setCookie("showActionsColumn", newShowActionsColumn ? "1" : "0");
+    setUseFallbackActionsColumn(false);
   }, [showActionsColumn]);
 
   // *** Warehouses *** //
@@ -296,16 +297,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   // *** Initialisation *** //
 
-  useEffect(() => {
-    const initialDarkMode = getCookie("darkMode") === "1";
-    const initialShowTooltip = getCookie("showTooltip") === "1";
-    const initialShowActionsColumn = getCookie("ShowActionsColumn") === "1";
-
-    setDarkMode(initialDarkMode);
-    setShowTooltip(initialShowTooltip);
-    setShowActionsColumn(initialShowActionsColumn);
-  }, []);
-
   const searchParams = useSearchParams();
 
   const currentWarehouseName = searchParams.get("warehouse") || null;
@@ -333,7 +324,14 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       warehouses.forEach((warehouse: WarehouseType) => {
         const columnOrderCookie = getCookie(`${warehouse.name}ColumnOrder`);
         if (columnOrderCookie) {
-          const cookieFields = JSON.parse(columnOrderCookie) as string[];
+          let cookieFields: string[] = [];
+          try {
+            cookieFields = JSON.parse(columnOrderCookie) as string[];
+          } catch (error) {
+            console.error(
+              `Couldn't parse ${warehouse.name}ColumnOrder cookie: ${columnOrderCookie}`,
+            );
+          }
           const warehouseFields = Object.keys(warehouse.item_schema);
 
           if (
@@ -384,6 +382,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       warehouseColumnOrderConfigs,
       setWarehouseColumnOrderConfigs,
       updateWarehouseColumnOrder,
+      useFallbackActionsColumn,
     }),
     [
       darkMode,
@@ -402,6 +401,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       warehouseColumnOrderConfigs,
       setWarehouseColumnOrderConfigs,
       updateWarehouseColumnOrder,
+      useFallbackActionsColumn,
     ],
   );
 

@@ -4,18 +4,6 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import DroppableColumnHeader from "./DroppableColumnHeader.client";
 import { WarehouseFieldOrder } from "./WarehousePage.server";
-import {
-  DndContext,
-  DragEndEvent,
-  PointerSensor,
-  closestCenter,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  horizontalListSortingStrategy,
-} from "@dnd-kit/sortable";
 import styles from "styles/Warehouse/TableHeader.module.scss";
 
 const getNextSortOrder = (current: boolean | null): boolean | null => {
@@ -90,17 +78,6 @@ const TableHeader: React.FC<TableHeaderProps> = ({
     updateWarehouseColumnOrder(warehouseName, fromIndex, toIndex, columns);
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (active.id !== over?.id) {
-      const oldIndex = fields.indexOf(String(active.id));
-      const newIndex = fields.indexOf(String(over?.id || ""));
-
-      updateWarehouseColumnOrder(warehouseName, oldIndex, newIndex, fields);
-    }
-  };
-
   useEffect(() => {
     if (currentWarehouseFieldOrder) {
       setOrderBy(currentWarehouseFieldOrder.fieldName);
@@ -108,49 +85,30 @@ const TableHeader: React.FC<TableHeaderProps> = ({
     }
   }, [currentWarehouseFieldOrder]);
 
-  const pointerSensor = useSensor(PointerSensor, {
-    activationConstraint: {
-      distance: 5,
-    },
-  });
-
-  const sensors = useSensors(pointerSensor);
-
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <thead>
-        <SortableContext
-          items={fields}
-          strategy={horizontalListSortingStrategy}
-        >
-          <tr>
-            {fields.map((header) => (
-              <DroppableColumnHeader
-                key={header}
-                header={header}
-                onDrop={handleHeaderDrop}
-                handleClick={handleHeaderClick}
-                orderBy={orderBy}
-                ascending={ascending}
-              />
-            ))}
-            {showActionsColumn && (
-              <th scope="col" className="font-monospace user-select-none p-0">
-                <div className={`d-flex align-items-center text-muted`}>
-                  <span className={`d-flex ${styles.actionsHeader} p-2`}>
-                    Actions
-                  </span>
-                </div>
-              </th>
-            )}
-          </tr>
-        </SortableContext>
-      </thead>
-    </DndContext>
+    <thead>
+      <tr>
+        {fields.map((header) => (
+          <DroppableColumnHeader
+            key={header}
+            header={header}
+            onDrop={handleHeaderDrop}
+            handleClick={handleHeaderClick}
+            orderBy={orderBy}
+            ascending={ascending}
+          />
+        ))}
+        {showActionsColumn && (
+          <th scope="col" className="font-monospace user-select-none p-0">
+            <div className={`d-flex align-items-center text-muted`}>
+              <span className={`d-flex ${styles.actionsHeader} p-2`}>
+                Actions
+              </span>
+            </div>
+          </th>
+        )}
+      </tr>
+    </thead>
   );
 };
 

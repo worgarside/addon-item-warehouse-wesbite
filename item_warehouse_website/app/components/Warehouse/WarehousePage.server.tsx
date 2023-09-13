@@ -75,6 +75,9 @@ const WarehousePage: React.FC<WarehousePageProps> = async ({
 
   warehouseColumnOrder = warehouseColumnOrder ?? itemPage.fields;
 
+  const showActionsColumnCookie =
+    cookies().get("showActionsColumn")?.value === "1";
+
   return (
     <>
       <NavBar
@@ -88,10 +91,12 @@ const WarehousePage: React.FC<WarehousePageProps> = async ({
       <Warehouse
         items={itemPage.items}
         fields={warehouseColumnOrder}
+        itemName={warehouse.item_name}
         warehouseName={warehouseName}
         currentPage={itemPage.page}
         warehouseSchema={warehouse.item_schema}
         warehouseFieldOrder={warehouseFieldOrder}
+        showActionsColumnCookie={showActionsColumnCookie}
       />
     </>
   );

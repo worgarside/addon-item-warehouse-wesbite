@@ -8,24 +8,33 @@ import styles from "styles/Warehouse/ActionsCell.module.scss";
 import { deleteItem } from "services/api";
 import { useRouter } from "next/navigation";
 
-const ActionsCell: React.FC<{
+interface ActionsCellProps {
   item: Record<string, string | number | boolean | null>;
-  primaryKeyNames: string[];
+  itemName: string;
   warehouseName: string;
-}> = ({ item, primaryKeyNames, warehouseName }) => {
+  primaryKeyNames: string[];
+}
+
+const ActionsCell: React.FC<ActionsCellProps> = ({
+  item,
+  itemName,
+  warehouseName,
+  primaryKeyNames,
+}) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<boolean>(false);
 
   const router = useRouter();
 
   const handleDeleteClick = () => {
-    console.log("Delete clicked");
-
     const deleteConfirm = confirm(
-      `Are you sure you want to delete ${item.name}?`,
+      `Are you sure you want to delete this ${itemName}?`,
     );
 
     if (deleteConfirm) {
+      setLoading(true);
+      setError(false);
+
       const itemPkDict = primaryKeyNames.reduce(
         (acc, key) => {
           acc[key] = item[key];
@@ -33,9 +42,6 @@ const ActionsCell: React.FC<{
         },
         {} as Record<string, string | number | boolean | null>,
       );
-
-      setLoading(true);
-      setError(false);
 
       deleteItem(warehouseName, itemPkDict)
         .then((result) => {
