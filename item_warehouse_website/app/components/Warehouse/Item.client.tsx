@@ -8,6 +8,7 @@ import ActionsCell from "./ActionsCell.client";
 interface ItemProps {
   item: Record<string, boolean | number | string | null>;
   fields: string[];
+  itemName: string;
   currentPage: number;
   warehouseName: string;
   primaryKeyNames: string[];
@@ -20,6 +21,7 @@ interface ItemProps {
 const Item: React.FC<ItemProps> = ({
   item,
   fields,
+  itemName,
   currentPage,
   warehouseName,
   primaryKeyNames,
@@ -45,8 +47,9 @@ const Item: React.FC<ItemProps> = ({
       {showActionsColumn && (
         <ActionsCell
           item={item}
-          primaryKeyNames={primaryKeyNames}
+          itemName={itemName}
           warehouseName={warehouseName}
+          primaryKeyNames={primaryKeyNames}
         />
       )}
     </tr>
