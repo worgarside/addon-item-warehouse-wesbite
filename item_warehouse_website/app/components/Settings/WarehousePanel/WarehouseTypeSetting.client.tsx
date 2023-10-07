@@ -26,8 +26,8 @@ interface WarehouseTypeSettingProps {
   alreadyHidden: boolean;
   updateWarehouseColumnExclusions: (
     warehouseName: string,
-    columnToHide: string,
-    hide: boolean,
+    columnToHide: string | null,
+    hide: boolean | null,
   ) => void;
 }
 

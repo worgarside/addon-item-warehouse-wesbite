@@ -321,7 +321,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         console.error(
           `Invalid arguments to updateWarehouseColumnExclusions: ${columnToHide}, ${hide}`,
         );
-        return;
+        return [];
       } else {
         currentExclusions = [
           ...(warehouseColumnExclusions[warehouseName] || []),
