@@ -25,13 +25,6 @@ export interface TableHeaderProps {
     ascending: boolean | null,
   ) => void;
   warehouseName: string;
-  warehouseColumnOrderConfigs: Record<string, string[]>;
-  updateWarehouseColumnOrder: (
-    warehouseName: string,
-    oldIndex: number,
-    newIndex: number,
-    columns: string[],
-  ) => string[];
   currentWarehouseFieldOrder: WarehouseFieldOrder | null;
   showActionsColumn: boolean;
 }
@@ -40,8 +33,6 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   fields,
   updateWarehouseFieldOrder,
   warehouseName,
-  warehouseColumnOrderConfigs,
-  updateWarehouseColumnOrder,
   currentWarehouseFieldOrder,
   showActionsColumn,
 }) => {
@@ -69,15 +60,6 @@ const TableHeader: React.FC<TableHeaderProps> = ({
     router.refresh();
   };
 
-  const handleHeaderDrop = (from: string, to: string) => {
-    const columns = warehouseColumnOrderConfigs[warehouseName];
-
-    const fromIndex = columns.indexOf(from);
-    const toIndex = columns.indexOf(to);
-
-    updateWarehouseColumnOrder(warehouseName, fromIndex, toIndex, columns);
-  };
-
   useEffect(() => {
     if (currentWarehouseFieldOrder) {
       setOrderBy(currentWarehouseFieldOrder.fieldName);
@@ -92,7 +74,6 @@ const TableHeader: React.FC<TableHeaderProps> = ({
           <DroppableColumnHeader
             key={header}
             header={header}
-            onDrop={handleHeaderDrop}
             handleClick={handleHeaderClick}
             orderBy={orderBy}
             ascending={ascending}
