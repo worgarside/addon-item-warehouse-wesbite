@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Accordion, Button, Form } from "react-bootstrap";
+import { Accordion, Form } from "react-bootstrap";
 import {
   DndContext,
   closestCenter,
@@ -16,13 +16,10 @@ import {
 } from "@dnd-kit/sortable";
 import WarehouseTypeSetting from "./WarehouseTypeSetting.client";
 import { FieldDisplayType, WarehouseType } from "services/api";
-import styles from "styles/Settings/WarehousePanel/WarehousePanel.module.scss";
-import Icon from "@mdi/react";
-import { mdiRestart } from "@mdi/js";
+import DangerButtonSetting from "./DangerButtonSetting.client";
 
 interface WarehousePanelProps {
   warehouse: WarehouseType;
-  warehouseRefreshCount: number;
   setDisplayAsOption: (
     warehouseName: string,
     fieldName: string,
@@ -35,28 +32,21 @@ interface WarehousePanelProps {
     columns: string[] | null,
   ) => string[];
   warehouseColumnOrder: string[];
+  columnExclusions: string[];
+  updateWarehouseColumnExclusions: (
+    warehouseName: string,
+    columnToHide: string | null,
+    hide: boolean | null,
+  ) => void;
 }
-
-const DangerButtonSetting: React.FC<{
-  onClick: () => void;
-  text: string;
-}> = ({ onClick, text }) => {
-  return (
-    <Form.Group className="border-bottom d-flex align-items-center p-2 mx-2">
-      <Form.Label className="lh-lg ms-2 my-0 pb-1">{text}</Form.Label>
-      <div className="flex-grow-1"></div>
-      <Button className={`btn-danger ${styles.button}`} onClick={onClick}>
-        <Icon path={mdiRestart} size={1} className={styles.icon} />
-      </Button>
-    </Form.Group>
-  );
-};
 
 export const WarehousePanel: React.FC<WarehousePanelProps> = ({
   warehouse,
   setDisplayAsOption,
   updateWarehouseColumnOrder,
   warehouseColumnOrder,
+  columnExclusions,
+  updateWarehouseColumnExclusions,
 }) => {
   const [columns, setColumns] = useState<string[]>(warehouseColumnOrder);
 
@@ -101,6 +91,10 @@ export const WarehousePanel: React.FC<WarehousePanelProps> = ({
                     key={`warehouseTypeSetting-${warehouse.name}-${column}`}
                     fieldDefinition={warehouse.item_schema[column]}
                     warehouseName={warehouse.name}
+                    alreadyHidden={columnExclusions.includes(column)}
+                    updateWarehouseColumnExclusions={
+                      updateWarehouseColumnExclusions
+                    }
                   />
                 ))}
               </Form>
@@ -113,12 +107,18 @@ export const WarehousePanel: React.FC<WarehousePanelProps> = ({
         <Accordion.Body className="p-0">
           <Form>
             <DangerButtonSetting
+              confirmMessage="Confirm column order reset?"
               onClick={() => {
-                if (window.confirm("Confirm column order reset?")) {
-                  updateWarehouseColumnOrder(warehouse.name, 0, 0, null);
-                }
+                updateWarehouseColumnOrder(warehouse.name, 0, 0, null);
               }}
-              text="Reset Column Order"
+              text="Reset column order"
+            />
+            <DangerButtonSetting
+              confirmMessage="Confirm rest all hide toggles?"
+              onClick={() => {
+                updateWarehouseColumnExclusions(warehouse.name, null, null);
+              }}
+              text="Show all columns"
             />
           </Form>
         </Accordion.Body>

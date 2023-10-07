@@ -13,6 +13,7 @@ interface ItemProps {
   warehouseName: string;
   primaryKeyNames: string[];
   warehouseSchema: Record<string, WarehouseSchemaProperty>;
+  columnExclusions: string[];
   showActionsColumn: boolean;
   warehouseRefreshCount: number;
   warehouseDisplayOptions: Record<string, FieldDisplayType>;
@@ -26,24 +27,27 @@ const Item: React.FC<ItemProps> = ({
   warehouseName,
   primaryKeyNames,
   warehouseSchema,
+  columnExclusions,
   showActionsColumn,
   warehouseRefreshCount,
   warehouseDisplayOptions,
 }) => {
   return (
     <tr>
-      {fields.map((header) => (
-        <Cell
-          value={item[header]}
-          header={header}
-          key={`${warehouseName}-${currentPage}-${header}-${warehouseRefreshCount}`}
-          displayAsOption={
-            warehouseDisplayOptions[header] ||
-            warehouseSchema[header].display_as
-          }
-          type={warehouseSchema[header].type}
-        />
-      ))}
+      {fields.map((header) =>
+        columnExclusions.includes(header) ? null : (
+          <Cell
+            value={item[header]}
+            header={header}
+            key={`${warehouseName}-${currentPage}-${header}-${warehouseRefreshCount}`}
+            displayAsOption={
+              warehouseDisplayOptions[header] ||
+              warehouseSchema[header].display_as
+            }
+            type={warehouseSchema[header].type}
+          />
+        ),
+      )}
       {showActionsColumn && (
         <ActionsCell
           item={item}

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Item from "./Item.client";
 import { WarehouseSchemaProperty } from "services/api";
 import { useSettings } from "components/Settings/SettingsContext.client";
@@ -45,12 +45,17 @@ const Warehouse: React.FC<WarehouseProps> = ({
     warehouseRefreshCount,
     useFallbackActionsColumn,
     updateWarehouseFieldOrder,
+    warehouseColumnExclusions,
     currentWarehouseFieldOrder,
     updateWarehouseColumnOrder,
     warehouseColumnOrderConfigs,
   } = useSettings();
 
   const warehouseDisplayOptions = getDisplayAsOptions(warehouseName);
+
+  const [currentColumnOrder, setCurrentColumnOrder] = React.useState(
+    warehouseColumnOrderConfigs[warehouseName] || fields,
+  );
 
   const primaryKeys = Object.keys(warehouseSchema).filter(
     (key) => warehouseSchema[key]?.primary_key,
@@ -62,16 +67,29 @@ const Warehouse: React.FC<WarehouseProps> = ({
     },
   });
 
+  useEffect(() => {
+    setCurrentColumnOrder(warehouseColumnOrderConfigs[warehouseName] || fields);
+  }, [warehouseColumnOrderConfigs, fields, warehouseName]);
+
   const sensors = useSensors(pointerSensor);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (active.id !== over?.id) {
-      const oldIndex = fields.indexOf(String(active.id));
-      const newIndex = fields.indexOf(String(over?.id || ""));
+    if (over && active.id !== over.id) {
+      const oldIndex = currentColumnOrder.indexOf(String(active.id));
+      const newIndex = currentColumnOrder.indexOf(String(over.id));
 
-      updateWarehouseColumnOrder(warehouseName, oldIndex, newIndex, fields);
+      console.debug(
+        `Column ${active.id} (#${oldIndex}) dropped to ${over.id} (#${newIndex})`,
+      );
+
+      updateWarehouseColumnOrder(
+        warehouseName,
+        oldIndex,
+        newIndex,
+        currentColumnOrder,
+      );
     }
   };
 
@@ -88,17 +106,16 @@ const Warehouse: React.FC<WarehouseProps> = ({
         >
           <table className={`table table-hover table-striped table-bordered`}>
             <TableHeader
-              fields={warehouseColumnOrderConfigs[warehouseName] || fields}
+              fields={currentColumnOrder}
               updateWarehouseFieldOrder={updateWarehouseFieldOrder}
               warehouseName={warehouseName}
-              warehouseColumnOrderConfigs={warehouseColumnOrderConfigs}
-              updateWarehouseColumnOrder={updateWarehouseColumnOrder}
               currentWarehouseFieldOrder={currentWarehouseFieldOrder}
               showActionsColumn={
                 useFallbackActionsColumn
                   ? showActionsColumnCookie
                   : showActionsColumn
               }
+              columnExclusions={warehouseColumnExclusions[warehouseName] || []}
             />
             <tbody>
               {items.map(
@@ -108,9 +125,7 @@ const Warehouse: React.FC<WarehouseProps> = ({
                       warehouseDisplayOptions,
                     )}-${primaryKeys.map((key) => item[key]).join("-")}`}
                     item={item}
-                    fields={
-                      warehouseColumnOrderConfigs[warehouseName] || fields
-                    }
+                    fields={currentColumnOrder}
                     itemName={itemName}
                     currentPage={currentPage}
                     primaryKeyNames={primaryKeys}
@@ -122,6 +137,9 @@ const Warehouse: React.FC<WarehouseProps> = ({
                       useFallbackActionsColumn
                         ? showActionsColumnCookie
                         : showActionsColumn
+                    }
+                    columnExclusions={
+                      warehouseColumnExclusions[warehouseName] || []
                     }
                   />
                 ),

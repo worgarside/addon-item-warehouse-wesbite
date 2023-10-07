@@ -57,6 +57,12 @@ interface SettingsContextProps {
     columns: string[] | null,
   ) => string[];
   useFallbackActionsColumn: boolean;
+  warehouseColumnExclusions: Record<string, string[]>;
+  updateWarehouseColumnExclusions: (
+    warehouseName: string,
+    columnToHide: string | null,
+    hide: boolean | null,
+  ) => string[];
 }
 
 const SettingsContext = createContext<SettingsContextProps | undefined>(
@@ -123,7 +129,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   // *** Dark Mode *** //
 
   const [darkMode, setDarkMode] = useState<boolean>(
-    getCookie("darkMode", "useState") === "1" || false,
+    getCookie("darkMode", "variable instantiation") === "1" || false,
   );
 
   const toggleDarkMode = useCallback(() => setDarkMode(!darkMode), [darkMode]);
@@ -139,7 +145,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   // *** API Documentation Tooltip *** //
 
   const [showTooltip, setShowTooltip] = useState<boolean>(
-    getCookie("showTooltip", "useState") === "1" || false,
+    getCookie("showTooltip", "variable instantiation") === "1" || false,
   );
 
   const toggleShowTooltip = useCallback(
@@ -157,7 +163,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     useState<boolean>(true);
 
   const [showActionsColumn, setShowActionsColumn] = useState<boolean>(
-    getCookie("showActionsColumn", "useState") === "1" || false,
+    getCookie("showActionsColumn", "variable instantiation") === "1" || false,
   );
 
   const toggleShowActionsColumn = useCallback(() => {
@@ -295,6 +301,63 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     [warehouseColumnOrderConfigs],
   );
 
+  // *** Warehouse Column Exclusions *** //
+
+  const [warehouseColumnExclusions, setWarehouseColumnExclusions] = useState<
+    Record<string, string[]>
+  >({});
+
+  const updateWarehouseColumnExclusions = useCallback(
+    (
+      warehouseName: string,
+      columnToHide: string | null,
+      hide: boolean | null,
+    ) => {
+      let currentExclusions: string[];
+
+      if (columnToHide === null && hide === null) {
+        currentExclusions = [];
+      } else if (columnToHide === null || hide === null) {
+        console.error(
+          `Invalid arguments to updateWarehouseColumnExclusions: ${columnToHide}, ${hide}`,
+        );
+        return [];
+      } else {
+        currentExclusions = [
+          ...(warehouseColumnExclusions[warehouseName] || []),
+        ];
+
+        if (!currentExclusions) {
+          currentExclusions = [];
+        }
+
+        if (hide) {
+          currentExclusions.push(columnToHide);
+        } else {
+          currentExclusions = currentExclusions.filter(
+            (column) => column !== columnToHide,
+          );
+        }
+      }
+
+      const newWarehouseColumnExclusions = {
+        ...warehouseColumnExclusions,
+        [warehouseName]: currentExclusions,
+      };
+
+      setWarehouseColumnExclusions(newWarehouseColumnExclusions);
+
+      setCookie(
+        `${warehouseName}ColumnExclusions`,
+        JSON.stringify(currentExclusions),
+        "updateWarehouseColumnExclusions",
+      );
+
+      return newWarehouseColumnExclusions[warehouseName];
+    },
+    [warehouseColumnExclusions],
+  );
+
   // *** Initialisation *** //
 
   const searchParams = useSearchParams();
@@ -321,8 +384,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     if (warehouses) {
       const newWarehouseColumnOrderConfigs: Record<string, string[]> = {};
 
+      const newWarehouseColumnExclusions: Record<string, string[]> = {};
+
       warehouses.forEach((warehouse: WarehouseType) => {
-        const columnOrderCookie = getCookie(`${warehouse.name}ColumnOrder`);
+        const columnOrderCookie = getCookie(
+          `${warehouse.name}ColumnOrder`,
+          "initialisation",
+        );
         if (columnOrderCookie) {
           let cookieFields: string[] = [];
           try {
@@ -354,9 +422,28 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
             newWarehouseColumnOrderConfigs[warehouse.name] = cookieFields;
           }
         }
+
+        const columnExclusionsCookie = getCookie(
+          `${warehouse.name}ColumnExclusions`,
+          "initialisation",
+        );
+
+        if (columnExclusionsCookie) {
+          let cookieExclusions: string[] = [];
+          try {
+            cookieExclusions = JSON.parse(columnExclusionsCookie) as string[];
+          } catch (error) {
+            console.error(
+              `Couldn't parse ${warehouse.name}ColumnExclusions cookie: ${columnExclusionsCookie}`,
+            );
+          }
+
+          newWarehouseColumnExclusions[warehouse.name] = cookieExclusions;
+        }
       });
 
       setWarehouseColumnOrderConfigs(newWarehouseColumnOrderConfigs);
+      setWarehouseColumnExclusions(newWarehouseColumnExclusions);
     }
   }, [warehouses]);
 
@@ -383,6 +470,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setWarehouseColumnOrderConfigs,
       updateWarehouseColumnOrder,
       useFallbackActionsColumn,
+      warehouseColumnExclusions,
+      updateWarehouseColumnExclusions,
     }),
     [
       darkMode,
@@ -402,6 +491,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setWarehouseColumnOrderConfigs,
       updateWarehouseColumnOrder,
       useFallbackActionsColumn,
+      warehouseColumnExclusions,
+      updateWarehouseColumnExclusions,
     ],
   );
 

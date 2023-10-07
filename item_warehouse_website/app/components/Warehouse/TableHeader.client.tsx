@@ -25,25 +25,18 @@ export interface TableHeaderProps {
     ascending: boolean | null,
   ) => void;
   warehouseName: string;
-  warehouseColumnOrderConfigs: Record<string, string[]>;
-  updateWarehouseColumnOrder: (
-    warehouseName: string,
-    oldIndex: number,
-    newIndex: number,
-    columns: string[],
-  ) => string[];
   currentWarehouseFieldOrder: WarehouseFieldOrder | null;
   showActionsColumn: boolean;
+  columnExclusions: string[];
 }
 
 const TableHeader: React.FC<TableHeaderProps> = ({
   fields,
   updateWarehouseFieldOrder,
   warehouseName,
-  warehouseColumnOrderConfigs,
-  updateWarehouseColumnOrder,
   currentWarehouseFieldOrder,
   showActionsColumn,
+  columnExclusions,
 }) => {
   const router = useRouter();
 
@@ -69,15 +62,6 @@ const TableHeader: React.FC<TableHeaderProps> = ({
     router.refresh();
   };
 
-  const handleHeaderDrop = (from: string, to: string) => {
-    const columns = warehouseColumnOrderConfigs[warehouseName];
-
-    const fromIndex = columns.indexOf(from);
-    const toIndex = columns.indexOf(to);
-
-    updateWarehouseColumnOrder(warehouseName, fromIndex, toIndex, columns);
-  };
-
   useEffect(() => {
     if (currentWarehouseFieldOrder) {
       setOrderBy(currentWarehouseFieldOrder.fieldName);
@@ -88,16 +72,17 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   return (
     <thead>
       <tr>
-        {fields.map((header) => (
-          <DroppableColumnHeader
-            key={header}
-            header={header}
-            onDrop={handleHeaderDrop}
-            handleClick={handleHeaderClick}
-            orderBy={orderBy}
-            ascending={ascending}
-          />
-        ))}
+        {fields.map((header) =>
+          columnExclusions.includes(header) ? null : (
+            <DroppableColumnHeader
+              key={header}
+              header={header}
+              handleClick={handleHeaderClick}
+              orderBy={orderBy}
+              ascending={ascending}
+            />
+          ),
+        )}
         {showActionsColumn && (
           <th scope="col" className="font-monospace user-select-none p-0">
             <div className={`d-flex align-items-center text-muted`}>

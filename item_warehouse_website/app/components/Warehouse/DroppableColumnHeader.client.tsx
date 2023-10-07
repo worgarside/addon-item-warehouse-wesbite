@@ -10,7 +10,6 @@ import { CSS } from "@dnd-kit/utilities";
 
 export interface DraggableHeaderProps {
   header: string;
-  onDrop: (from: string, to: string) => void;
   handleClick: (header: string) => void;
   orderBy: string | null;
   ascending: boolean | null;
