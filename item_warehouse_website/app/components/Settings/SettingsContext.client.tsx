@@ -123,7 +123,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   // *** Dark Mode *** //
 
   const [darkMode, setDarkMode] = useState<boolean>(
-    getCookie("darkMode", "useState") === "1" || false,
+    getCookie("darkMode", "variable instantiation") === "1" || false,
   );
 
   const toggleDarkMode = useCallback(() => setDarkMode(!darkMode), [darkMode]);
@@ -139,7 +139,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   // *** API Documentation Tooltip *** //
 
   const [showTooltip, setShowTooltip] = useState<boolean>(
-    getCookie("showTooltip", "useState") === "1" || false,
+    getCookie("showTooltip", "variable instantiation") === "1" || false,
   );
 
   const toggleShowTooltip = useCallback(
@@ -157,7 +157,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     useState<boolean>(true);
 
   const [showActionsColumn, setShowActionsColumn] = useState<boolean>(
-    getCookie("showActionsColumn", "useState") === "1" || false,
+    getCookie("showActionsColumn", "variable instantiation") === "1" || false,
   );
 
   const toggleShowActionsColumn = useCallback(() => {
