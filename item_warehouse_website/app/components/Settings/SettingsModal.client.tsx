@@ -14,7 +14,6 @@ const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
   const [show, setShow] = useState(false);
   const {
     warehouses,
-    warehouseRefreshCount,
     darkMode,
     showTooltip,
     showActionsColumn,
@@ -123,7 +122,6 @@ const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
                 >
                   <WarehousePanel
                     warehouse={warehouse}
-                    warehouseRefreshCount={warehouseRefreshCount}
                     setDisplayAsOption={setDisplayAsOption}
                     updateWarehouseColumnOrder={updateWarehouseColumnOrder}
                     warehouseColumnOrder={
