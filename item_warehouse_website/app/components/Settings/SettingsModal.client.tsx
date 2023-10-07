@@ -116,7 +116,7 @@ const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
               {warehouses.map((warehouse) => (
                 <Tab.Pane
                   eventKey={warehouse.name}
-                  key={`pane-${warehouse.name}-${warehouseRefreshCount}`}
+                  key={`pane-${warehouse.name}`}
                   className={`flex-grow-1`}
                 >
                   <WarehousePanel
