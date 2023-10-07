@@ -20,7 +20,6 @@ import DangerButtonSetting from "./DangerButtonSetting.client";
 
 interface WarehousePanelProps {
   warehouse: WarehouseType;
-  warehouseRefreshCount: number;
   setDisplayAsOption: (
     warehouseName: string,
     fieldName: string,
