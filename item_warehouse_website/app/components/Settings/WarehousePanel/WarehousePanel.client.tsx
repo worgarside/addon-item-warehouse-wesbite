@@ -35,6 +35,12 @@ interface WarehousePanelProps {
     columns: string[] | null,
   ) => string[];
   warehouseColumnOrder: string[];
+  columnExclusions: string[];
+  updateWarehouseColumnExclusions: (
+    warehouseName: string,
+    columnToHide: string,
+    hide: boolean,
+  ) => void;
 }
 
 const DangerButtonSetting: React.FC<{
@@ -57,6 +63,8 @@ export const WarehousePanel: React.FC<WarehousePanelProps> = ({
   setDisplayAsOption,
   updateWarehouseColumnOrder,
   warehouseColumnOrder,
+  columnExclusions,
+  updateWarehouseColumnExclusions,
 }) => {
   const [columns, setColumns] = useState<string[]>(warehouseColumnOrder);
 
@@ -101,6 +109,10 @@ export const WarehousePanel: React.FC<WarehousePanelProps> = ({
                     key={`warehouseTypeSetting-${warehouse.name}-${column}`}
                     fieldDefinition={warehouse.item_schema[column]}
                     warehouseName={warehouse.name}
+                    alreadyHidden={columnExclusions.includes(column)}
+                    updateWarehouseColumnExclusions={
+                      updateWarehouseColumnExclusions
+                    }
                   />
                 ))}
               </Form>

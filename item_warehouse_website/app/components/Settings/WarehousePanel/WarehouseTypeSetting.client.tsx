@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import styles from "styles/Settings/WarehousePanel/WarehouseTypeSetting.module.scss";
 import Icon from "@mdi/react";
 import { mdiDrag, mdiRestart } from "@mdi/js";
@@ -23,6 +23,12 @@ interface WarehouseTypeSettingProps {
     fieldName: string,
     displayAs: FieldDisplayType,
   ) => void;
+  alreadyHidden: boolean;
+  updateWarehouseColumnExclusions: (
+    warehouseName: string,
+    columnToHide: string,
+    hide: boolean,
+  ) => void;
 }
 
 const WarehouseTypeSetting: React.FC<WarehouseTypeSettingProps> = ({
@@ -30,7 +36,11 @@ const WarehouseTypeSetting: React.FC<WarehouseTypeSettingProps> = ({
   fieldDefinition,
   warehouseName,
   setDisplayAsOption,
+  alreadyHidden,
+  updateWarehouseColumnExclusions,
 }) => {
+  const [isHidden, setIsHidden] = useState<boolean>(alreadyHidden);
+
   const handleDisplayTypeReset = () => {
     (async () => {
       const resetDisplayOption = await resetDisplayType(name, warehouseName);
@@ -73,6 +83,16 @@ const WarehouseTypeSetting: React.FC<WarehouseTypeSettingProps> = ({
         <code>{name}</code>
       </Form.Label>
       <div className={`flex-grow-1 ${styles.noCursor}`}></div>
+      <Form.Check
+        type="switch"
+        id={name}
+        checked={!isHidden}
+        onChange={() => {
+          updateWarehouseColumnExclusions(warehouseName, name, !isHidden);
+          setIsHidden(!isHidden);
+        }}
+        className="my-auto ms-auto"
+      />
       <span className="pe-3 text-muted">Display as:</span>
       <Form.Select
         defaultValue={fieldDefinition.display_as}

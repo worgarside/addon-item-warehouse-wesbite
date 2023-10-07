@@ -45,6 +45,7 @@ const Warehouse: React.FC<WarehouseProps> = ({
     warehouseRefreshCount,
     useFallbackActionsColumn,
     updateWarehouseFieldOrder,
+    warehouseColumnExclusions,
     currentWarehouseFieldOrder,
     updateWarehouseColumnOrder,
     warehouseColumnOrderConfigs,
@@ -114,6 +115,7 @@ const Warehouse: React.FC<WarehouseProps> = ({
                   ? showActionsColumnCookie
                   : showActionsColumn
               }
+              columnExclusions={warehouseColumnExclusions[warehouseName] || []}
             />
             <tbody>
               {items.map(
@@ -135,6 +137,9 @@ const Warehouse: React.FC<WarehouseProps> = ({
                       useFallbackActionsColumn
                         ? showActionsColumnCookie
                         : showActionsColumn
+                    }
+                    columnExclusions={
+                      warehouseColumnExclusions[warehouseName] || []
                     }
                   />
                 ),

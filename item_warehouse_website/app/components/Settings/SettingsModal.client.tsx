@@ -24,6 +24,8 @@ const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
     setDisplayAsOption,
     updateWarehouseColumnOrder,
     warehouseColumnOrderConfigs,
+    warehouseColumnExclusions,
+    updateWarehouseColumnExclusions,
   } = useSettings();
 
   const handleClose = () => {
@@ -127,6 +129,12 @@ const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
                     warehouseColumnOrder={
                       warehouseColumnOrderConfigs[warehouse.name] ||
                       Object.keys(warehouse.item_schema)
+                    }
+                    columnExclusions={
+                      warehouseColumnExclusions[warehouse.name] || []
+                    }
+                    updateWarehouseColumnExclusions={
+                      updateWarehouseColumnExclusions
                     }
                   />
                 </Tab.Pane>

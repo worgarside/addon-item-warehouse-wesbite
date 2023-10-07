@@ -57,6 +57,12 @@ interface SettingsContextProps {
     columns: string[] | null,
   ) => string[];
   useFallbackActionsColumn: boolean;
+  warehouseColumnExclusions: Record<string, string[]>;
+  updateWarehouseColumnExclusions: (
+    warehouseName: string,
+    columnToHide: string,
+    hide: boolean,
+  ) => string[];
 }
 
 const SettingsContext = createContext<SettingsContextProps | undefined>(
@@ -295,6 +301,49 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     [warehouseColumnOrderConfigs],
   );
 
+  // *** Warehouse Column Exclusions *** //
+
+  const [warehouseColumnExclusions, setWarehouseColumnExclusions] = useState<
+    Record<string, string[]>
+  >({});
+
+  const updateWarehouseColumnExclusions = useCallback(
+    (warehouseName: string, columnToHide: string, hide: boolean) => {
+      console.log();
+      let currentExclusions = [
+        ...(warehouseColumnExclusions[warehouseName] || []),
+      ];
+
+      if (!currentExclusions) {
+        currentExclusions = [];
+      }
+
+      if (hide) {
+        currentExclusions.push(columnToHide);
+      } else {
+        currentExclusions = currentExclusions.filter(
+          (column) => column !== columnToHide,
+        );
+      }
+
+      const newWarehouseColumnExclusions = {
+        ...warehouseColumnExclusions,
+        [warehouseName]: currentExclusions,
+      };
+
+      setWarehouseColumnExclusions(newWarehouseColumnExclusions);
+
+      setCookie(
+        `${warehouseName}ColumnExclusions`,
+        JSON.stringify(currentExclusions),
+        "updateWarehouseColumnExclusions",
+      );
+
+      return newWarehouseColumnExclusions[warehouseName];
+    },
+    [warehouseColumnExclusions],
+  );
+
   // *** Initialisation *** //
 
   const searchParams = useSearchParams();
@@ -321,8 +370,13 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     if (warehouses) {
       const newWarehouseColumnOrderConfigs: Record<string, string[]> = {};
 
+      const newWarehouseColumnExclusions: Record<string, string[]> = {};
+
       warehouses.forEach((warehouse: WarehouseType) => {
-        const columnOrderCookie = getCookie(`${warehouse.name}ColumnOrder`);
+        const columnOrderCookie = getCookie(
+          `${warehouse.name}ColumnOrder`,
+          "initialisation",
+        );
         if (columnOrderCookie) {
           let cookieFields: string[] = [];
           try {
@@ -354,9 +408,28 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
             newWarehouseColumnOrderConfigs[warehouse.name] = cookieFields;
           }
         }
+
+        const columnExclusionsCookie = getCookie(
+          `${warehouse.name}ColumnExclusions`,
+          "initialisation",
+        );
+
+        if (columnExclusionsCookie) {
+          let cookieExclusions: string[] = [];
+          try {
+            cookieExclusions = JSON.parse(columnExclusionsCookie) as string[];
+          } catch (error) {
+            console.error(
+              `Couldn't parse ${warehouse.name}ColumnExclusions cookie: ${columnExclusionsCookie}`,
+            );
+          }
+
+          newWarehouseColumnExclusions[warehouse.name] = cookieExclusions;
+        }
       });
 
       setWarehouseColumnOrderConfigs(newWarehouseColumnOrderConfigs);
+      setWarehouseColumnExclusions(newWarehouseColumnExclusions);
     }
   }, [warehouses]);
 
@@ -383,6 +456,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setWarehouseColumnOrderConfigs,
       updateWarehouseColumnOrder,
       useFallbackActionsColumn,
+      warehouseColumnExclusions,
+      updateWarehouseColumnExclusions,
     }),
     [
       darkMode,
@@ -402,6 +477,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setWarehouseColumnOrderConfigs,
       updateWarehouseColumnOrder,
       useFallbackActionsColumn,
+      warehouseColumnExclusions,
+      updateWarehouseColumnExclusions,
     ],
   );
 
