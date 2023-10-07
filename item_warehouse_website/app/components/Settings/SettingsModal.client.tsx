@@ -14,7 +14,6 @@ const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
   const [show, setShow] = useState(false);
   const {
     warehouses,
-    warehouseRefreshCount,
     darkMode,
     showTooltip,
     showActionsColumn,
@@ -24,6 +23,8 @@ const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
     setDisplayAsOption,
     updateWarehouseColumnOrder,
     warehouseColumnOrderConfigs,
+    warehouseColumnExclusions,
+    updateWarehouseColumnExclusions,
   } = useSettings();
 
   const handleClose = () => {
@@ -121,12 +122,17 @@ const SettingsModal: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
                 >
                   <WarehousePanel
                     warehouse={warehouse}
-                    warehouseRefreshCount={warehouseRefreshCount}
                     setDisplayAsOption={setDisplayAsOption}
                     updateWarehouseColumnOrder={updateWarehouseColumnOrder}
                     warehouseColumnOrder={
                       warehouseColumnOrderConfigs[warehouse.name] ||
                       Object.keys(warehouse.item_schema)
+                    }
+                    columnExclusions={
+                      warehouseColumnExclusions[warehouse.name] || []
+                    }
+                    updateWarehouseColumnExclusions={
+                      updateWarehouseColumnExclusions
                     }
                   />
                 </Tab.Pane>

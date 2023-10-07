@@ -27,6 +27,7 @@ export interface TableHeaderProps {
   warehouseName: string;
   currentWarehouseFieldOrder: WarehouseFieldOrder | null;
   showActionsColumn: boolean;
+  columnExclusions: string[];
 }
 
 const TableHeader: React.FC<TableHeaderProps> = ({
@@ -35,6 +36,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   warehouseName,
   currentWarehouseFieldOrder,
   showActionsColumn,
+  columnExclusions,
 }) => {
   const router = useRouter();
 
@@ -70,15 +72,17 @@ const TableHeader: React.FC<TableHeaderProps> = ({
   return (
     <thead>
       <tr>
-        {fields.map((header) => (
-          <DroppableColumnHeader
-            key={header}
-            header={header}
-            handleClick={handleHeaderClick}
-            orderBy={orderBy}
-            ascending={ascending}
-          />
-        ))}
+        {fields.map((header) =>
+          columnExclusions.includes(header) ? null : (
+            <DroppableColumnHeader
+              key={header}
+              header={header}
+              handleClick={handleHeaderClick}
+              orderBy={orderBy}
+              ascending={ascending}
+            />
+          ),
+        )}
         {showActionsColumn && (
           <th scope="col" className="font-monospace user-select-none p-0">
             <div className={`d-flex align-items-center text-muted`}>
