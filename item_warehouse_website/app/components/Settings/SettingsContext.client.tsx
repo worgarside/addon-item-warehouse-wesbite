@@ -60,8 +60,8 @@ interface SettingsContextProps {
   warehouseColumnExclusions: Record<string, string[]>;
   updateWarehouseColumnExclusions: (
     warehouseName: string,
-    columnToHide: string,
-    hide: boolean,
+    columnToHide: string | null,
+    hide: boolean | null,
   ) => string[];
 }
 
@@ -308,22 +308,36 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   >({});
 
   const updateWarehouseColumnExclusions = useCallback(
-    (warehouseName: string, columnToHide: string, hide: boolean) => {
-      console.log();
-      let currentExclusions = [
-        ...(warehouseColumnExclusions[warehouseName] || []),
-      ];
+    (
+      warehouseName: string,
+      columnToHide: string | null,
+      hide: boolean | null,
+    ) => {
+      let currentExclusions: string[];
 
-      if (!currentExclusions) {
+      if (columnToHide === null && hide === null) {
         currentExclusions = [];
-      }
-
-      if (hide) {
-        currentExclusions.push(columnToHide);
-      } else {
-        currentExclusions = currentExclusions.filter(
-          (column) => column !== columnToHide,
+      } else if (columnToHide === null || hide === null) {
+        console.error(
+          `Invalid arguments to updateWarehouseColumnExclusions: ${columnToHide}, ${hide}`,
         );
+        return;
+      } else {
+        currentExclusions = [
+          ...(warehouseColumnExclusions[warehouseName] || []),
+        ];
+
+        if (!currentExclusions) {
+          currentExclusions = [];
+        }
+
+        if (hide) {
+          currentExclusions.push(columnToHide);
+        } else {
+          currentExclusions = currentExclusions.filter(
+            (column) => column !== columnToHide,
+          );
+        }
       }
 
       const newWarehouseColumnExclusions = {

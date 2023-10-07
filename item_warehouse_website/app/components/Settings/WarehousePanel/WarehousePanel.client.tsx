@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Accordion, Button, Form } from "react-bootstrap";
+import { Accordion, Form } from "react-bootstrap";
 import {
   DndContext,
   closestCenter,
@@ -16,9 +16,7 @@ import {
 } from "@dnd-kit/sortable";
 import WarehouseTypeSetting from "./WarehouseTypeSetting.client";
 import { FieldDisplayType, WarehouseType } from "services/api";
-import styles from "styles/Settings/WarehousePanel/WarehousePanel.module.scss";
-import Icon from "@mdi/react";
-import { mdiRestart } from "@mdi/js";
+import DangerButtonSetting from "./DangerButtonSetting.client";
 
 interface WarehousePanelProps {
   warehouse: WarehouseType;
@@ -38,25 +36,10 @@ interface WarehousePanelProps {
   columnExclusions: string[];
   updateWarehouseColumnExclusions: (
     warehouseName: string,
-    columnToHide: string,
-    hide: boolean,
+    columnToHide: string | null,
+    hide: boolean | null,
   ) => void;
 }
-
-const DangerButtonSetting: React.FC<{
-  onClick: () => void;
-  text: string;
-}> = ({ onClick, text }) => {
-  return (
-    <Form.Group className="border-bottom d-flex align-items-center p-2 mx-2">
-      <Form.Label className="lh-lg ms-2 my-0 pb-1">{text}</Form.Label>
-      <div className="flex-grow-1"></div>
-      <Button className={`btn-danger ${styles.button}`} onClick={onClick}>
-        <Icon path={mdiRestart} size={1} className={styles.icon} />
-      </Button>
-    </Form.Group>
-  );
-};
 
 export const WarehousePanel: React.FC<WarehousePanelProps> = ({
   warehouse,
@@ -130,7 +113,15 @@ export const WarehousePanel: React.FC<WarehousePanelProps> = ({
                   updateWarehouseColumnOrder(warehouse.name, 0, 0, null);
                 }
               }}
-              text="Reset Column Order"
+              text="Reset column order"
+            />
+            <DangerButtonSetting
+              onClick={() => {
+                if (window.confirm("Confirm column order reset?")) {
+                  updateWarehouseColumnExclusions(warehouse.name, null, null);
+                }
+              }}
+              text="Show all columns"
             />
           </Form>
         </Accordion.Body>
