@@ -57,6 +57,12 @@ interface SettingsContextProps {
     columns: string[] | null,
   ) => string[];
   useFallbackActionsColumn: boolean;
+  warehouseColumnExclusions: Record<string, string[]>;
+  updateWarehouseColumnExclusions: (
+    warehouseName: string,
+    columnToHide: string,
+    hide: boolean,
+  ) => string[];
 }
 
 const SettingsContext = createContext<SettingsContextProps | undefined>(
@@ -295,6 +301,49 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     [warehouseColumnOrderConfigs],
   );
 
+  // *** Warehouse Column Exclusions *** //
+
+  const [warehouseColumnExclusions, setWarehouseColumnExclusions] = useState<
+    Record<string, string[]>
+  >({});
+
+  const updateWarehouseColumnExclusions = useCallback(
+    (warehouseName: string, columnToHide: string, hide: boolean) => {
+      console.log();
+      let currentExclusions = [
+        ...(warehouseColumnExclusions[warehouseName] || []),
+      ];
+
+      if (!currentExclusions) {
+        currentExclusions = [];
+      }
+
+      if (hide) {
+        currentExclusions.push(columnToHide);
+      } else {
+        currentExclusions = currentExclusions.filter(
+          (column) => column !== columnToHide,
+        );
+      }
+
+      const newWarehouseColumnExclusions = {
+        ...warehouseColumnExclusions,
+        [warehouseName]: currentExclusions,
+      };
+
+      setWarehouseColumnExclusions(newWarehouseColumnExclusions);
+
+      setCookie(
+        `${warehouseName}ColumnExclusions`,
+        JSON.stringify(currentExclusions),
+        "updateWarehouseColumnExclusions",
+      );
+
+      return newWarehouseColumnExclusions[warehouseName];
+    },
+    [warehouseColumnExclusions],
+  );
+
   // *** Initialisation *** //
 
   const searchParams = useSearchParams();
@@ -383,6 +432,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setWarehouseColumnOrderConfigs,
       updateWarehouseColumnOrder,
       useFallbackActionsColumn,
+      warehouseColumnExclusions,
+      updateWarehouseColumnExclusions,
     }),
     [
       darkMode,
@@ -402,6 +453,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setWarehouseColumnOrderConfigs,
       updateWarehouseColumnOrder,
       useFallbackActionsColumn,
+      warehouseColumnExclusions,
+      updateWarehouseColumnExclusions,
     ],
   );
 

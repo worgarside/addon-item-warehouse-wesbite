@@ -45,22 +45,42 @@ const WarehousePage: React.FC<WarehousePageProps> = async ({
     `${warehouseName}ColumnOrder`,
   );
 
-  let warehouseColumnOrder: string[] | null = warehouseColumnOrderCookie
+  const warehouseColumnOrder: string[] | null = warehouseColumnOrderCookie
     ? (JSON.parse(warehouseColumnOrderCookie.value) as string[])
     : null;
 
+  const warehouseColumnExclusionsCookie = cookies().get(
+    `${warehouseName}ColumnExclusions`,
+  );
+
+  const warehouseColumnExclusions: string[] = warehouseColumnExclusionsCookie
+    ? (JSON.parse(warehouseColumnExclusionsCookie.value) as string[])
+    : [];
+
   let itemPage: ItemsResponse;
   let warehouse: WarehouseType;
+  let fields = null;
 
   try {
     warehouse = await getWarehouse(warehouseName);
+
+    if (warehouseColumnOrder) {
+      fields = warehouseColumnOrder;
+    }
+
+    if (warehouseColumnExclusions.length > 0) {
+      fields = (fields || Object.keys(warehouse.item_schema)).filter(
+        (fieldName) => !warehouseColumnExclusions.includes(fieldName),
+      );
+    }
+
     itemPage = await getItemsFromWarehouse(
       warehouseName,
       pageSize,
       page,
       warehouseFieldOrder.fieldName,
       warehouseFieldOrder.ascending,
-      warehouseColumnOrder,
+      fields,
     );
   } catch (error) {
     return (
@@ -73,7 +93,7 @@ const WarehousePage: React.FC<WarehousePageProps> = async ({
     );
   }
 
-  warehouseColumnOrder = warehouseColumnOrder ?? itemPage.fields;
+  fields = fields ?? itemPage.fields;
 
   const showActionsColumnCookie =
     cookies().get("showActionsColumn")?.value === "1";
@@ -90,7 +110,7 @@ const WarehousePage: React.FC<WarehousePageProps> = async ({
       />
       <Warehouse
         items={itemPage.items}
-        fields={warehouseColumnOrder}
+        fields={fields}
         itemName={warehouse.item_name}
         warehouseName={warehouseName}
         currentPage={itemPage.page}
