@@ -108,18 +108,16 @@ export const WarehousePanel: React.FC<WarehousePanelProps> = ({
         <Accordion.Body className="p-0">
           <Form>
             <DangerButtonSetting
+              confirmMessage="Confirm column order reset?"
               onClick={() => {
-                if (window.confirm("Confirm column order reset?")) {
-                  updateWarehouseColumnOrder(warehouse.name, 0, 0, null);
-                }
+                updateWarehouseColumnOrder(warehouse.name, 0, 0, null);
               }}
               text="Reset column order"
             />
             <DangerButtonSetting
+              confirmMessage="Confirm rest all hide toggles?"
               onClick={() => {
-                if (window.confirm("Confirm column order reset?")) {
-                  updateWarehouseColumnExclusions(warehouse.name, null, null);
-                }
+                updateWarehouseColumnExclusions(warehouse.name, null, null);
               }}
               text="Show all columns"
             />
