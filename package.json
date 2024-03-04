@@ -3,6 +3,6 @@
     "precommit": "cd item_warehouse_website && npm run precommit"
   },
   "devDependencies": {
-    "husky": "^8.0.3"
+    "husky": "^9.0.11"
   }
 }
